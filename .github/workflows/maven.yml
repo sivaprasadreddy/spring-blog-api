@@ -1,0 +1,27 @@
+name: Maven Build
+
+on:
+  push:
+    branches: [ "main", "fix/*", "feat/*" ]
+    paths-ignore:
+      - "*.md"
+      - "renovate.json"
+      - "Taskfile.yml"
+      - "LICENSE"
+      - ".sdkmanrc"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: 25
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Tests
+        run: ./mvnw -ntp verify

@@ -1,0 +1,50 @@
+version: '3'
+
+vars:
+  GOOS: "{{default OS .GOOS}}"
+  MVNW: '{{if eq .GOOS "windows"}}mvnw.cmd{{else}}./mvnw{{end}}'
+  SLEEP_CMD: '{{if eq .GOOS "windows"}}timeout{{else}}sleep{{end}}'
+  IMAGE_NAME: 'sivaprasadreddy/spring-blog-api'
+  DC_DIR: "docker"
+  DC_FILE: "{{.DC_DIR}}/docker-compose.yml"
+
+tasks:
+  default:
+    cmds:
+      - task: test
+
+  test:
+    desc: Run all the tests
+    cmds:
+      - "{{.MVNW}} clean verify"
+
+  build_image:
+    desc: Build Docker Image using Buildpacks
+    cmds:
+      - "{{.MVNW}} clean compile spring-boot:build-image -DskipTests"
+
+  start:
+    desc: Start the application
+    deps: [ build_image ]
+    cmds:
+      - docker compose -f "{{.DC_FILE}}" up --force-recreate -d
+
+  stop:
+    desc: Stop the application
+    cmds:
+      - docker compose -f "{{.DC_FILE}}" stop
+      - docker compose -f "{{.DC_FILE}}" rm -f
+
+  restart:
+    desc: Restarts the application
+    cmds:
+      - task: stop
+      - task: sleep
+      - task: start
+
+  sleep:
+    desc: Sleeps for the given number of seconds
+    vars:
+      DURATION: "{{default 5 .DURATION}}"
+    cmds:
+      - "{{.SLEEP_CMD}} {{.DURATION}}"

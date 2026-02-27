@@ -1,0 +1,38 @@
+name: 'spring-blog-api'
+services:
+  spring-blog-api:
+    image: sivaprasadreddy/spring-blog-api
+    container_name: spring-blog-api
+    environment:
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:postgresql://blog-db:5432/postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      EMAIL_HOST: mailpit
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      - blog-db
+      - mailpit
+    deploy:
+      resources:
+        limits:
+          memory: 1024m
+
+  blog-db:
+    image: postgres:18-alpine
+    container_name: blog-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+
+  mailpit:
+    image: axllent/mailpit:v1.29
+    ports:
+      - "1025:1025"
+      - "8025:8025"
