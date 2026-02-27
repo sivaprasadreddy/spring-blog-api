@@ -1,0 +1,35 @@
+### User Login
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "password": "admin"
+}
+
+> {%
+    client.test("Request executed successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.global.set("auth_token", response.body.token);
+    });
+%}
+
+### Get Posts
+GET http://localhost:8080/api/posts
+
+### Get Post by Slug
+GET http://localhost:8080/api/posts/introducing-springboot
+
+### Get Post Comments
+GET http://localhost:8080/api/posts/introducing-springboot/comments
+
+### Create Post
+POST http://localhost:8080/api/posts
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "title": "Agentic Workflow using Junie",
+  "slug": "agentic-workflow-using-junie",
+  "content": "Agentic Workflow using IntelliJ IDEA and Junie is Cool"
+}
