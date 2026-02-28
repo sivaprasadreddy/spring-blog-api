@@ -1,0 +1,15 @@
+# Tech Stack
+- Language: Java 25
+- Framework: Spring Boot 4.x
+- Web/API: Spring Web MVC
+- Security: Spring Security + OAuth2 Resource Server + JWT (RSA keys)
+- Validation: Jakarta Bean Validation
+- Persistence: Spring Data JPA + Hibernate
+- Database: PostgreSQL
+- Migrations: Flyway
+- Mapping: MapStruct
+- Modular architecture/events: Spring Modulith
+- Email: Spring Mail (JavaMail) + Console email adapter
+- API docs: springdoc OpenAPI / Swagger UI
+- Build: Maven
+- Testing: JUnit 5, Spring Boot test starters, Testcontainers
