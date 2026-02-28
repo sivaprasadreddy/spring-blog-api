@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
@@ -17,7 +18,8 @@ import org.springframework.test.web.servlet.client.RestTestClient;
 @AutoConfigureMockMvc
 @AutoConfigureRestTestClient
 @Import(TestcontainersConfiguration.class)
-@ActiveProfiles("it")
+@ActiveProfiles("test")
+@Sql("/test-data.sql")
 public abstract class AbstractIT {
 
     @Autowired

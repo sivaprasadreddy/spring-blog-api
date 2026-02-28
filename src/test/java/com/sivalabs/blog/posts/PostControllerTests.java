@@ -10,9 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
 
-@Sql("/test-data.sql")
 class PostControllerTests extends AbstractIT {
 
     @Test

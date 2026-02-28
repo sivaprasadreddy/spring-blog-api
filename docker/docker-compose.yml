@@ -1,8 +1,7 @@
-name: 'spring-blog-api'
+name: "spring-blog-api"
 services:
   spring-blog-api:
     image: sivaprasadreddy/spring-blog-api
-    container_name: spring-blog-api
     environment:
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       SPRING_PROFILES_ACTIVE: docker
@@ -16,14 +15,9 @@ services:
     depends_on:
       - blog-db
       - mailpit
-    deploy:
-      resources:
-        limits:
-          memory: 1024m
 
   blog-db:
     image: postgres:18-alpine
-    container_name: blog-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
