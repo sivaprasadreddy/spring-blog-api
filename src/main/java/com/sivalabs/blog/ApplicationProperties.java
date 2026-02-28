@@ -1,6 +1,7 @@
 package com.sivalabs.blog;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -12,14 +13,16 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public record ApplicationProperties(
         String supportEmail,
+        String emailServiceType,
         String newsletterJobCron,
         @DefaultValue("10") int postsPerPage,
         @Valid JwtProperties jwt,
         @Valid CorsProperties cors,
         @Valid OpenAPIProperties openApi) {
+
     public record JwtProperties(
-            @DefaultValue("BootifulBlog") String issuer,
-            @DefaultValue("604800") Long expiresInSeconds,
+            @NotEmpty String issuer,
+            @NotNull Long expiresInSeconds,
             @NotNull RSAPublicKey publicKey,
             @NotNull RSAPrivateKey privateKey) {}
 
@@ -30,9 +33,9 @@ public record ApplicationProperties(
             @DefaultValue("*") String allowedHeaders) {}
 
     public record OpenAPIProperties(
-            @DefaultValue("Bootiful Blog API") String title,
+            @DefaultValue("Blog API") String title,
 
-            @DefaultValue("Bootiful Blog API Swagger Documentation")
+            @DefaultValue("Blog API Swagger Documentation")
             String description,
 
             @DefaultValue("v1.0.0") String version,

@@ -11,6 +11,7 @@ services:
       EMAIL_HOST: mailpit
     ports:
       - "8080:8080"
+      - "5005:5005"
     restart: unless-stopped
     depends_on:
       - blog-db

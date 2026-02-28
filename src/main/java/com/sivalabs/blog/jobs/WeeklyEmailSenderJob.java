@@ -46,7 +46,7 @@ class WeeklyEmailSenderJob {
             log.info("No users found for this week. Skipping newsletter");
             return;
         }
-        emailService.send("Weekly Newsletter", userEmails, newsLetterContent);
+        emailService.send(userEmails, "Weekly Newsletter", newsLetterContent);
         log.info("Sent newsletter at {} to {} users", Instant.now(), userEmails.size());
     }
 

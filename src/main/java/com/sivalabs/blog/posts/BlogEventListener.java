@@ -1,5 +1,6 @@
 package com.sivalabs.blog.posts;
 
+import com.sivalabs.blog.ApplicationProperties;
 import com.sivalabs.blog.notification.EmailService;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
@@ -7,9 +8,11 @@ import org.springframework.stereotype.Component;
 @Component
 class BlogEventListener {
     private final EmailService emailService;
+    private final ApplicationProperties properties;
 
-    BlogEventListener(EmailService emailService) {
+    BlogEventListener(EmailService emailService, ApplicationProperties properties) {
         this.emailService = emailService;
+        this.properties = properties;
     }
 
     @ApplicationModuleListener
@@ -19,6 +22,6 @@ class BlogEventListener {
                 New Post Published: <a href="%s">%s</a>
                 %s
                 """.formatted(event.slug(), event.title(), event.content());
-        emailService.send(subject, content);
+        emailService.send(subject, properties.supportEmail(), content);
     }
 }
