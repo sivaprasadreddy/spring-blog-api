@@ -32,4 +32,29 @@ class UserControllerTests extends AbstractIT {
         assertThat(response.email()).isEqualTo("user123@gmail.com");
         assertThat(response.role().name()).isEqualTo("ROLE_USER");
     }
+
+    @Test
+    void shouldReturnValidationErrorsForInvalidRegistrationRequest() {
+        String response = restTestClient
+                .post()
+                .uri("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("""
+                        {
+                          "name":"",
+                          "email":"invalid-email",
+                          "password":""
+                        }
+                        """)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Validation Error");
+        assertThat(response).contains("Name is required");
+        assertThat(response).contains("Invalid email address");
+        assertThat(response).contains("Password is required");
+    }
 }

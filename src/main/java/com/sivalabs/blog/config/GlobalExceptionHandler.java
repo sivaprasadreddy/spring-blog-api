@@ -38,10 +38,10 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toList();
 
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(UNPROCESSABLE_CONTENT, ex.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(BAD_REQUEST, ex.getMessage());
         problemDetail.setTitle("Validation Error");
         problemDetail.setProperty("errors", errors);
-        return ResponseEntity.status(UNPROCESSABLE_CONTENT).body(problemDetail);
+        return ResponseEntity.status(BAD_REQUEST).body(problemDetail);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -56,7 +56,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ProblemDetail handle(BadRequestException e) {
         log.error("Bad request", e);
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(UNPROCESSABLE_CONTENT, e.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(BAD_REQUEST, e.getMessage());
         problemDetail.setTitle("Bad Request");
         problemDetail.setProperty("errors", List.of(e.getMessage()));
         return problemDetail;

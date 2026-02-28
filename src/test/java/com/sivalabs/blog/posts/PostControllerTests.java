@@ -65,6 +65,19 @@ class PostControllerTests extends AbstractIT {
     }
 
     @Test
+    void shouldReturnNotFoundWhenPostSlugDoesNotExist() {
+        String response = restTestClient.get()
+                .uri("/api/posts/{slug}", "missing-post-slug")
+                .exchange()
+                .expectStatus().isNotFound()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Resource Not Found");
+        assertThat(response).contains("Post with slug 'missing-post-slug' not found");
+    }
+
+    @Test
     void shouldGetPostComments() {
         List<CommentDto> commentDtos = restTestClient.get()
                 .uri("/api/posts/{slug}/comments", "introducing-springboot")
@@ -75,6 +88,19 @@ class PostControllerTests extends AbstractIT {
                 .getResponseBody();
 
         assertThat(commentDtos).hasSize(2);
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenGettingCommentsForUnknownPost() {
+        String response = restTestClient.get()
+                .uri("/api/posts/{slug}/comments", "missing-post-slug")
+                .exchange()
+                .expectStatus().isNotFound()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Resource Not Found");
+        assertThat(response).contains("Post with slug 'missing-post-slug' not found");
     }
 
     @Test
@@ -93,6 +119,54 @@ class PostControllerTests extends AbstractIT {
                 .exchange()
                 .expectStatus()
                 .isCreated();
+    }
+
+    @Test
+    void shouldReturnValidationErrorsForInvalidCommentPayload() {
+        String response = restTestClient
+                .post()
+                .uri("/api/posts/{slug}/comments", "introducing-springboot")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("""
+                        {
+                          "name": "",
+                          "email": "invalid-email",
+                          "content": ""
+                        }
+                        """)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Validation Error");
+        assertThat(response).contains("Name is required");
+        assertThat(response).contains("Invalid email address");
+        assertThat(response).contains("Content is required");
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenCreatingCommentForUnknownPost() {
+        String response = restTestClient
+                .post()
+                .uri("/api/posts/{slug}/comments", "missing-post-slug")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("""
+                        {
+                          "name": "Siva",
+                          "email": "siva@gmail.com",
+                          "content": "Test comment"
+                        }
+                        """)
+                .exchange()
+                .expectStatus()
+                .isNotFound()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Resource Not Found");
+        assertThat(response).contains("Post with slug 'missing-post-slug' not found");
     }
 
     @Test
@@ -118,6 +192,80 @@ class PostControllerTests extends AbstractIT {
     }
 
     @Test
+    void shouldReturnUnauthorizedWhenCreatingPostWithoutToken() {
+        restTestClient
+                .post()
+                .uri("/api/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("""
+                        {
+                          "title":"Post Title",
+                          "slug":"post-slug",
+                          "content":"Post content"
+                        }
+                        """)
+                .exchange()
+                .expectStatus()
+                .isUnauthorized();
+    }
+
+    @Test
+    void shouldReturnValidationErrorsWhenCreatingPostWithInvalidPayload() {
+        UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
+        String token = this.createToken(userDto);
+
+        String response = restTestClient
+                .post()
+                .uri("/api/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body("""
+                        {
+                          "title":"",
+                          "slug":"",
+                          "content":""
+                        }
+                        """)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Validation Error");
+        assertThat(response).contains("Title is required");
+        assertThat(response).contains("Slug is required");
+        assertThat(response).contains("Content is required");
+    }
+
+    @Test
+    void shouldReturnUnprocessableContentWhenCreatingPostWithDuplicateSlug() {
+        UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
+        String token = this.createToken(userDto);
+
+        String response = restTestClient
+                .post()
+                .uri("/api/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body("""
+                        {
+                          "title":"Duplicate Slug Post",
+                          "slug":"introducing-springboot",
+                          "content":"Post content"
+                        }
+                        """)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Bad Request");
+        assertThat(response).contains("Post with slug introducing-springboot already exists");
+    }
+
+    @Test
     void shouldUpdatePostSuccessfully() {
         var payload = """
             {
@@ -138,5 +286,111 @@ class PostControllerTests extends AbstractIT {
                 .exchange()
                 .expectStatus()
                 .isOk();
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenUpdatingPostWithoutToken() {
+        var payload = """
+            {
+              "title":"Installing LinuxMint OS",
+              "slug":"installing-linuxmint-os",
+              "content":"Installing LinuxMint 22"
+            }
+            """;
+
+        restTestClient
+                .put()
+                .uri("/api/posts/{slug}", "installing-linuxmint")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(payload)
+                .exchange()
+                .expectStatus()
+                .isUnauthorized();
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingUnknownPost() {
+        var payload = """
+            {
+              "title":"Unknown Post",
+              "slug":"unknown-post",
+              "content":"Updated content"
+            }
+            """;
+        UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
+        String token = this.createToken(userDto);
+
+        String response = restTestClient
+                .put()
+                .uri("/api/posts/{slug}", "missing-post-slug")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body(payload)
+                .exchange()
+                .expectStatus()
+                .isNotFound()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Resource Not Found");
+        assertThat(response).contains("Post with slug 'missing-post-slug' not found");
+    }
+
+    @Test
+    void shouldReturnValidationErrorsWhenUpdatingPostWithInvalidPayload() {
+        var payload = """
+            {
+              "title":"",
+              "slug":"",
+              "content":""
+            }
+            """;
+        UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
+        String token = this.createToken(userDto);
+
+        String response = restTestClient
+                .put()
+                .uri("/api/posts/{slug}", "installing-linuxmint")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body(payload)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Validation Error");
+        assertThat(response).contains("Title is required");
+        assertThat(response).contains("Slug is required");
+        assertThat(response).contains("Content is required");
+    }
+
+    @Test
+    void shouldReturnUnprocessableContentWhenUpdatingPostWithDuplicateSlug() {
+        var payload = """
+            {
+              "title":"Installing LinuxMint OS",
+              "slug":"introducing-springboot",
+              "content":"Installing LinuxMint 22"
+            }
+            """;
+        UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
+        String token = this.createToken(userDto);
+
+        String response = restTestClient
+                .put()
+                .uri("/api/posts/{slug}", "installing-linuxmint")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body(payload)
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Bad Request");
+        assertThat(response).contains("Post with slug 'introducing-springboot' already exists");
     }
 }
