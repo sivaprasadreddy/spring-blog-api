@@ -1,10 +1,10 @@
 package com.sivalabs.blog.auth;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.sivalabs.blog.AbstractIT;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthControllerTests extends AbstractIT {
 

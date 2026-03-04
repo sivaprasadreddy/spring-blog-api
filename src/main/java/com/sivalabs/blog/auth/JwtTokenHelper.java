@@ -2,11 +2,12 @@ package com.sivalabs.blog.auth;
 
 import com.sivalabs.blog.ApplicationProperties;
 import com.sivalabs.blog.users.UserDto;
-import java.time.Instant;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Component;
+
+import java.time.Instant;
 
 @Component
 public class JwtTokenHelper {

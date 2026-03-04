@@ -1,7 +1,5 @@
 package com.sivalabs.blog.users;
 
-import static org.springframework.http.HttpStatus.CREATED;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,10 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 @RestController
 @Tag(name = "Users API")
 class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
@@ -33,7 +33,7 @@ class UserController {
         @ApiResponse(responseCode = "201", description = "Created user successfully"),
     })
     ResponseEntity<RegistrationResponse> createUser(@RequestBody @Valid RegistrationRequest req) {
-        log.info("Registration request for email: {}", req.email());
+        LOG.info("Registration request for email: {}", req.email());
         var cmd = new CreateUserCmd(req.name(), req.email(), req.password(), Role.ROLE_USER);
         userService.createUser(cmd);
         var response = new RegistrationResponse(req.name(), req.email(), Role.ROLE_USER);

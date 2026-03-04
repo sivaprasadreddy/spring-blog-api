@@ -1,7 +1,7 @@
 package com.sivalabs.blog.jobs;
 
-import com.sivalabs.blog.posts.PostDto;
 import com.sivalabs.blog.notification.EmailService;
+import com.sivalabs.blog.posts.PostDto;
 import com.sivalabs.blog.posts.PostsAPI;
 import com.sivalabs.blog.users.UserDto;
 import com.sivalabs.blog.users.UsersAPI;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @Component
 class WeeklyEmailSenderJob {
-    private static final Logger log = LoggerFactory.getLogger(WeeklyEmailSenderJob.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WeeklyEmailSenderJob.class);
     private final PostsAPI postsAPI;
     private final UsersAPI usersAPI;
     private final EmailService emailService;
@@ -31,23 +31,23 @@ class WeeklyEmailSenderJob {
 
     @Scheduled(cron = "${blog.newsletter-job-cron}")
     void sendNewsLetter() {
-        log.info("Sending newsletter at {}", Instant.now());
+        LOG.info("Sending newsletter at {}", Instant.now());
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime startOfWeek = LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay();
         List<PostDto> posts = postsAPI.findPostsCreatedBetween(startOfWeek, end);
         if (posts.isEmpty()) {
-            log.info("No posts found for this week. Skipping newsletter");
+            LOG.info("No posts found for this week. Skipping newsletter");
             return;
         }
         String newsLetterContent = createNewsLetterContent(posts);
         List<String> userEmails =
                 usersAPI.findAllUsers().stream().map(UserDto::email).toList();
         if (userEmails.isEmpty()) {
-            log.info("No users found for this week. Skipping newsletter");
+            LOG.info("No users found for this week. Skipping newsletter");
             return;
         }
         emailService.send(userEmails, "Weekly Newsletter", newsLetterContent);
-        log.info("Sent newsletter at {} to {} users", Instant.now(), userEmails.size());
+        LOG.info("Sent newsletter at {} to {} users", Instant.now(), userEmails.size());
     }
 
     private String createNewsLetterContent(List<PostDto> posts) {

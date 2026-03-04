@@ -18,7 +18,7 @@ import java.time.Instant;
 @RestController
 @Tag(name = "Auth API")
 class AuthController {
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
     private final AuthService authService;
 
     AuthController(AuthService authService) {
@@ -32,7 +32,7 @@ class AuthController {
         @ApiResponse(responseCode = "401", description = "Invalid credentials"),
     })
     LoginResponse login(@RequestBody @Valid LoginRequest req) {
-        log.info("Login request for email: {}", req.email());
+        LOG.info("Login request for email: {}", req.email());
         var request = new LoginCmd(req.email(), req.password());
         var authResponse = authService.authenticate(request);
         return new LoginResponse(

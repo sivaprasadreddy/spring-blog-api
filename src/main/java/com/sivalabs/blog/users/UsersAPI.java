@@ -1,12 +1,11 @@
 package com.sivalabs.blog.users;
 
-import com.sivalabs.blog.shared.PagedResult;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Component
 public class UsersAPI {
     private final UserService userService;
     private final UserMapper userMapper;

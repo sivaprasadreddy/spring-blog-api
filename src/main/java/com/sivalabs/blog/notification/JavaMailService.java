@@ -10,14 +10,14 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component
+@Service
 @ConditionalOnProperty(name = "blog.email-service-type", havingValue = "javamail", matchIfMissing = true)
 public class JavaMailService implements EmailService {
-    private static final Logger log = LoggerFactory.getLogger(JavaMailService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JavaMailService.class);
     private final JavaMailSender javaMailSender;
     private final ApplicationProperties properties;
 
@@ -46,7 +46,7 @@ public class JavaMailService implements EmailService {
 
             javaMailSender.send(message);
         } catch (MailException | MessagingException e) {
-            log.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
     }
 }

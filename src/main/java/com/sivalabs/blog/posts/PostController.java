@@ -9,29 +9,22 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
 @Tag(name = "Posts API")
 class PostController {
-    private static final Logger log = LoggerFactory.getLogger(PostController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PostController.class);
     private final PostService postService;
 
     PostController(PostService postService) {
@@ -42,7 +35,7 @@ class PostController {
     PagedResult<PostDto> findPosts(
             @RequestParam(value = "query", defaultValue = "") String query,
             @RequestParam(value = "page", defaultValue = "1") int page) {
-        log.info("Get posts by page='{}' and query='{}'", page, query);
+        LOG.info("Get posts by page='{}' and query='{}'", page, query);
         if (query == null || query.trim().isEmpty()) {
             return postService.findPosts(page);
         }
@@ -51,7 +44,7 @@ class PostController {
 
     @GetMapping("/{slug}")
     ResponseEntity<PostDto> getPostBySlug(@PathVariable String slug) {
-        log.info("Get post by slug='{}'", slug);
+        LOG.info("Get post by slug='{}'", slug);
         var post = postService
                 .findPostBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with slug '" + slug + "' not found"));
@@ -60,7 +53,7 @@ class PostController {
 
     @GetMapping("/{slug}/comments")
     List<CommentDto> getPostComments(@PathVariable String slug) {
-        log.info("Get post comments by slug='{}'", slug);
+        LOG.info("Get post comments by slug='{}'", slug);
         PostDto postDto = postService
                 .findPostBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with slug '" + slug + "' not found"));
@@ -70,7 +63,7 @@ class PostController {
     @PostMapping("/{slug}/comments")
     @ResponseStatus(HttpStatus.CREATED)
     void createComment(@PathVariable String slug, @Valid @RequestBody CreateCommentPayload payload) {
-        log.info("Create comment for post with slug: '{}'", slug);
+        LOG.info("Create comment for post with slug: '{}'", slug);
         PostDto postDto = postService
                 .findPostBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with slug '" + slug + "' not found"));
@@ -94,7 +87,7 @@ class PostController {
     ResponseEntity<Void> createPost(@Valid @RequestBody PostPayload postPayload) {
         var loginUserId = UserContextUtils.getCurrentUserIdOrThrow();
         var slug = postPayload.slug();
-        log.info("Creating a new post with slug: '{}'", slug);
+        LOG.info("Creating a new post with slug: '{}'", slug);
         var cmd = new CreatePostCmd(postPayload.title(), slug, postPayload.content(), loginUserId);
         this.postService.createPost(cmd);
         var location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -108,7 +101,7 @@ class PostController {
     @PutMapping("/{slug}")
     @SecurityRequirement(name = "Bearer")
     ResponseEntity<Void> updatePost(@PathVariable String slug, @Valid @RequestBody PostPayload postPayload) {
-        log.info("Updating post with slug: '{}'", slug);
+        LOG.info("Updating post with slug: '{}'", slug);
         PostDto postDto = postService
                 .findPostBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Post with slug '" + slug + "' not found"));

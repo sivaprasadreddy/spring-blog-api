@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AuthControllerMockMvcTests extends AbstractIT {
+class AuthControllerMockMvcTests extends AbstractIT {
     @Test
     @DisplayName("Given valid credentials, user should be able to login successfully")
     void shouldLoginSuccessfully() {

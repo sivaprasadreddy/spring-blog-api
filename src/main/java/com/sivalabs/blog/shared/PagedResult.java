@@ -1,8 +1,9 @@
 package com.sivalabs.blog.shared;
 
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 import java.util.function.Function;
-import org.springframework.data.domain.Page;
 
 public record PagedResult<T>(
         List<T> data,

@@ -1,14 +1,14 @@
 package com.sivalabs.blog.config;
 
-import static org.springframework.http.HttpStatus.*;
-
 import com.sivalabs.blog.shared.BadRequestException;
 import com.sivalabs.blog.shared.ResourceNotFoundException;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,9 +17,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
+
 @RestControllerAdvice
 class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(Exception.class)
     ProblemDetail handle(Exception e) {
@@ -33,7 +37,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        log.error("Validation error", ex);
+        LOG.error("Validation error", ex);
         var errors = ex.getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toList();
@@ -46,7 +50,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ProblemDetail handle(BadCredentialsException e) {
-        log.error("Bad credentials", e);
+        LOG.error("Bad credentials", e);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(UNAUTHORIZED, e.getMessage());
         problemDetail.setTitle("Unauthorized");
         problemDetail.setProperty("errors", List.of(e.getMessage()));
@@ -55,7 +59,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ProblemDetail handle(BadRequestException e) {
-        log.error("Bad request", e);
+        LOG.error("Bad request", e);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(BAD_REQUEST, e.getMessage());
         problemDetail.setTitle("Bad Request");
         problemDetail.setProperty("errors", List.of(e.getMessage()));
@@ -64,7 +68,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ProblemDetail handle(ResourceNotFoundException e) {
-        log.error("Resource not found", e);
+        LOG.error("Resource not found", e);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(NOT_FOUND, e.getMessage());
         problemDetail.setTitle("Resource Not Found");
         problemDetail.setProperty("errors", List.of(e.getMessage()));
@@ -73,7 +77,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ProblemDetail handle(AccessDeniedException e) {
-        log.error("Access denied", e);
+        LOG.error("Access denied", e);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(FORBIDDEN, e.getMessage());
         problemDetail.setTitle("Access Denied");
         problemDetail.setProperty("errors", List.of(e.getMessage()));

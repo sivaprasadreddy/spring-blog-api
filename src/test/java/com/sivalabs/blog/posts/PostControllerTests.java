@@ -1,15 +1,16 @@
 package com.sivalabs.blog.posts;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.sivalabs.blog.AbstractIT;
 import com.sivalabs.blog.shared.PagedResult;
 import com.sivalabs.blog.users.Role;
 import com.sivalabs.blog.users.UserDto;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class PostControllerTests extends AbstractIT {
 
