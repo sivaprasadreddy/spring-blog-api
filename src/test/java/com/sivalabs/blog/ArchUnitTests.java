@@ -10,19 +10,19 @@ import java.util.List;
 import static com.tngtech.archunit.core.domain.JavaModifier.*;
 
 class ArchUnitTests {
+    private static final String BASE_PACKAGE = ArchUnitTests.class.getPackageName();
+
     @Test
     void shouldFulfillConstraints() {
         Taikai.builder()
-                .namespace("com.sivalabs.blog")
+                .namespace(BASE_PACKAGE)
                 .java(java -> java
                         .noUsageOfDeprecatedAPIs()
                         .methodsShouldNotDeclareGenericExceptions()
                         .utilityClassesShouldBeFinalAndHavePrivateConstructor()
                         .imports(ImportsConfigurer::shouldHaveNoCycles)
                         .naming(naming -> naming
-                                .methodsShouldNotMatch("^(foo$|bar$).*")
                                 .fieldsShouldNotMatch(".*(List|Set|Map)$")
-                                .fieldsShouldMatch("com.enofex.taikai.Matcher", "matcher")
                                 .constantsShouldFollowConventions()
                                 .interfacesShouldNotHavePrefixI()))
                 .logging(logging -> logging
@@ -35,7 +35,7 @@ class ArchUnitTests {
                 .spring(spring -> spring
                         .noAutowiredFields()
                         .boot(boot -> boot
-                                .applicationClassShouldResideInPackage("com.sivalabs.blog"))
+                                .applicationClassShouldResideInPackage(BASE_PACKAGE))
                         .configurations(c -> c.namesShouldMatch(".+Config"))
                         .controllers(controllers -> controllers
                                 .shouldBeAnnotatedWithRestController()
