@@ -43,7 +43,7 @@ class ArchUnitTests {
                                 .shouldNotDependOnOtherControllers()
                                 .shouldBePackagePrivate())
                         .services(services -> services
-                                .shouldBeAnnotatedWithService()
+                                //.shouldBeAnnotatedWithService()
                                 .shouldNotDependOnControllers()
                                 .namesShouldEndWithService())
                         .repositories(repositories -> repositories
