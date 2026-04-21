@@ -16,8 +16,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.String.format;
-
 @Service
 class PostService {
     private final PostRepository postRepository;
@@ -73,7 +71,7 @@ class PostService {
     @Transactional
     public void createPost(CreatePostCmd cmd) {
         if(postRepository.existsBySlug(cmd.slug())) {
-            throw new BadRequestException(format("Post with slug %s already exists", cmd.slug()));
+            throw new BadRequestException("Post with slug %s already exists".formatted(cmd.slug()));
         }
         var user = usersAPI.findById(cmd.createdBy()).orElseThrow();
 
