@@ -18,7 +18,7 @@ public class TestcontainersConfiguration {
     @Bean
     @ServiceConnection
     MailpitContainer mailpitContainer() {
-        return new MailpitContainer("axllent/mailpit:v1.29");
+        return new MailpitContainer("axllent/mailpit:v1.30");
     }
 
 }
