@@ -24,7 +24,7 @@
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <tc-mailpit.version>1.3.1</tc-mailpit.version>
         <taikai.version>1.64.0</taikai.version>
-        <bootui.version>1.5.1</bootui.version>
+        <bootui.version>1.5.2</bootui.version>
         <dockerImageName>sivaprasadreddy/${project.artifactId}</dockerImageName>
     </properties>
 
@@ -248,7 +248,7 @@
             <plugin>
                 <groupId>org.openrewrite.maven</groupId>
                 <artifactId>rewrite-maven-plugin</artifactId>
-                <version>6.41.0</version>
+                <version>6.42.0</version>
                 <configuration>
                     <exportDatatables>true</exportDatatables>
                     <activeRecipes>
@@ -259,7 +259,7 @@
                     <dependency>
                         <groupId>org.openrewrite.recipe</groupId>
                         <artifactId>rewrite-spring</artifactId>
-                        <version>6.32.1</version>
+                        <version>6.33.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
