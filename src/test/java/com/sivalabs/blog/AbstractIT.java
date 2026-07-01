@@ -1,7 +1,7 @@
 package com.sivalabs.blog;
 
-import com.sivalabs.blog.auth.JwtTokenHelper;
-import com.sivalabs.blog.users.UserDto;
+import com.sivalabs.blog.auth.domain.JwtTokenHelper;
+import com.sivalabs.blog.users.domain.models.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +17,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
 @AutoConfigureRestTestClient
-@Import(TestcontainersConfiguration.class)
+@Import(TestcontainersConfig.class)
 @ActiveProfiles("test")
 @Sql("/test-data.sql")
 public abstract class AbstractIT {

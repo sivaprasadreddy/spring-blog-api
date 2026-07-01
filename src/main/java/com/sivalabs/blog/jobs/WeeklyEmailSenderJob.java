@@ -1,9 +1,9 @@
 package com.sivalabs.blog.jobs;
 
 import com.sivalabs.blog.notification.EmailService;
-import com.sivalabs.blog.posts.PostDto;
+import com.sivalabs.blog.posts.domain.models.PostDto;
 import com.sivalabs.blog.posts.PostsAPI;
-import com.sivalabs.blog.users.UserDto;
+import com.sivalabs.blog.users.domain.models.UserDto;
 import com.sivalabs.blog.users.UsersAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
