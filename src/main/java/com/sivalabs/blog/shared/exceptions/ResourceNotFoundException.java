@@ -1,4 +1,4 @@
-package com.sivalabs.blog.shared;
+package com.sivalabs.blog.shared.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

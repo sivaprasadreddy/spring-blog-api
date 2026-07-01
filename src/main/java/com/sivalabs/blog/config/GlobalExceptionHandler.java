@@ -1,7 +1,7 @@
 package com.sivalabs.blog.config;
 
-import com.sivalabs.blog.shared.BadRequestException;
-import com.sivalabs.blog.shared.ResourceNotFoundException;
+import com.sivalabs.blog.shared.exceptions.BadRequestException;
+import com.sivalabs.blog.shared.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;

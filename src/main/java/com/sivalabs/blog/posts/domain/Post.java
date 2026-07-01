@@ -1,6 +1,6 @@
 package com.sivalabs.blog.posts.domain;
 
-import com.sivalabs.blog.shared.BaseEntity;
+import com.sivalabs.blog.shared.entities.BaseEntity;
 import jakarta.persistence.*;
 
 @Entity

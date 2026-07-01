@@ -1,4 +1,4 @@
-package com.sivalabs.blog.shared;
+package com.sivalabs.blog.shared.models;
 
 import org.springframework.data.domain.Page;
 

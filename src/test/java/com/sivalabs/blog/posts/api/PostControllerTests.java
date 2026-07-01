@@ -3,7 +3,7 @@ package com.sivalabs.blog.posts.api;
 import com.sivalabs.blog.AbstractIT;
 import com.sivalabs.blog.posts.domain.models.CommentDto;
 import com.sivalabs.blog.posts.domain.models.PostDto;
-import com.sivalabs.blog.shared.PagedResult;
+import com.sivalabs.blog.shared.models.PagedResult;
 import com.sivalabs.blog.users.domain.models.Role;
 import com.sivalabs.blog.users.domain.models.UserDto;
 import org.junit.jupiter.api.Test;

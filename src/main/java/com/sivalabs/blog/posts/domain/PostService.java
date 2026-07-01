@@ -2,9 +2,9 @@ package com.sivalabs.blog.posts.domain;
 
 import com.sivalabs.blog.ApplicationProperties;
 import com.sivalabs.blog.posts.domain.models.*;
-import com.sivalabs.blog.shared.BadRequestException;
-import com.sivalabs.blog.shared.PagedResult;
-import com.sivalabs.blog.shared.ResourceNotFoundException;
+import com.sivalabs.blog.shared.exceptions.BadRequestException;
+import com.sivalabs.blog.shared.models.PagedResult;
+import com.sivalabs.blog.shared.exceptions.ResourceNotFoundException;
 import com.sivalabs.blog.users.UsersAPI;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
