@@ -2,10 +2,9 @@ package com.sivalabs.blog.users;
 
 import com.sivalabs.blog.users.domain.UserService;
 import com.sivalabs.blog.users.domain.models.UserDto;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Component;
 
 @Component
 public class UsersAPI {

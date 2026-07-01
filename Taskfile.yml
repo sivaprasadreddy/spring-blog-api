@@ -13,8 +13,14 @@ tasks:
     cmds:
       - task: test
 
+  format:
+    desc: Formats code
+    cmds:
+      - "{{.MVNW}} spotless:apply"
+
   test:
     desc: Run all the tests
+    deps: [ format ]
     cmds:
       - "{{.MVNW}} clean verify"
 

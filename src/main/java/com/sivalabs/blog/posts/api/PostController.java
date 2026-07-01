@@ -4,21 +4,20 @@ import com.sivalabs.blog.auth.AuthUtils;
 import com.sivalabs.blog.posts.domain.PostService;
 import com.sivalabs.blog.posts.domain.models.*;
 import com.sivalabs.blog.shared.exceptions.BadRequestException;
-import com.sivalabs.blog.shared.models.PagedResult;
 import com.sivalabs.blog.shared.exceptions.ResourceNotFoundException;
+import com.sivalabs.blog.shared.models.PagedResult;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")

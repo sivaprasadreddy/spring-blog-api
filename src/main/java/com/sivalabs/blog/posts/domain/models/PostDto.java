@@ -9,5 +9,4 @@ public record PostDto(
         String content,
         Long createdBy,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt) {
-}
+        LocalDateTime updatedAt) {}

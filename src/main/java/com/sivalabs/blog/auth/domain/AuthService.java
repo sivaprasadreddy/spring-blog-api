@@ -16,10 +16,7 @@ public class AuthService {
     private final JwtTokenHelper tokenProvider;
     private final UsersAPI usersAPI;
 
-    AuthService(
-            AuthenticationManager authManager,
-            JwtTokenHelper tokenProvider,
-            UsersAPI usersAPI) {
+    AuthService(AuthenticationManager authManager, JwtTokenHelper tokenProvider, UsersAPI usersAPI) {
         this.authManager = authManager;
         this.tokenProvider = tokenProvider;
         this.usersAPI = usersAPI;
@@ -29,8 +26,7 @@ public class AuthService {
         var auth = new UsernamePasswordAuthenticationToken(request.email(), request.password());
         authManager.authenticate(auth);
 
-        var user = usersAPI
-                .findByEmail(request.email())
+        var user = usersAPI.findByEmail(request.email())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + request.email()));
 
         var authToken = tokenProvider.generateToken(user);

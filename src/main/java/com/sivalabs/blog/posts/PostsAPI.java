@@ -2,10 +2,9 @@ package com.sivalabs.blog.posts;
 
 import com.sivalabs.blog.posts.domain.PostService;
 import com.sivalabs.blog.posts.domain.models.PostDto;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class PostsAPI {

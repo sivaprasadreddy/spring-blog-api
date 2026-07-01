@@ -2,13 +2,12 @@ package com.sivalabs.blog.users.domain;
 
 import com.sivalabs.blog.users.domain.models.CreateUserCmd;
 import com.sivalabs.blog.users.domain.models.UserDto;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {

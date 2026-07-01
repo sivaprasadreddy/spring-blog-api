@@ -1,12 +1,12 @@
 package com.sivalabs.blog.auth.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.sivalabs.blog.AbstractIT;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthControllerMockMvcTests extends AbstractIT {
     @Test

@@ -1,5 +1,7 @@
 package com.sivalabs.blog.users.api;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 import com.sivalabs.blog.users.domain.UserService;
 import com.sivalabs.blog.users.domain.models.CreateUserCmd;
 import com.sivalabs.blog.users.domain.models.Role;
@@ -16,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @Tag(name = "Users API")

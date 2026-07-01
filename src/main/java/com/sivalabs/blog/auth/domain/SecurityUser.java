@@ -1,15 +1,14 @@
 package com.sivalabs.blog.auth.domain;
 
 import com.sivalabs.blog.users.domain.models.Role;
-import org.jspecify.annotations.NonNull;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
+import org.jspecify.annotations.NonNull;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 class SecurityUser implements UserDetails, Serializable {
     @Serial
@@ -30,8 +29,7 @@ class SecurityUser implements UserDetails, Serializable {
     }
 
     @Override
-    @NonNull
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    @NonNull public Collection<? extends GrantedAuthority> getAuthorities() {
         return Set.of(new SimpleGrantedAuthority(role.name()));
     }
 
@@ -41,8 +39,7 @@ class SecurityUser implements UserDetails, Serializable {
     }
 
     @Override
-    @NonNull
-    public String getUsername() {
+    @NonNull public String getUsername() {
         return email;
     }
 

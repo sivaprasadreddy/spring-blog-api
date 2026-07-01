@@ -1,7 +1,7 @@
 package com.sivalabs.blog.auth.domain;
 
-import com.sivalabs.blog.users.domain.models.UserDto;
 import com.sivalabs.blog.users.UsersAPI;
+import com.sivalabs.blog.users.domain.models.UserDto;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,10 +17,8 @@ class SecurityUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    @NonNull
-    public UserDetails loadUserByUsername(@NonNull String userName) {
-        return usersAPI
-                .findByEmailWithPassword(userName)
+    @NonNull public UserDetails loadUserByUsername(@NonNull String userName) {
+        return usersAPI.findByEmailWithPassword(userName)
                 .map(this::toSecurityUser)
                 .orElseThrow(() -> new UsernameNotFoundException("Email " + userName + " not found"));
     }

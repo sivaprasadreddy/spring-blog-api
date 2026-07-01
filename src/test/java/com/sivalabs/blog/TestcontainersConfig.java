@@ -20,5 +20,4 @@ public class TestcontainersConfig {
     MailpitContainer mailpit() {
         return new MailpitContainer("axllent/mailpit:v1.30");
     }
-
 }

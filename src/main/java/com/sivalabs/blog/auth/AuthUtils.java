@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 public final class AuthUtils {
     private AuthUtils() {}
+
     public static Long getCurrentUserIdOrThrow() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {

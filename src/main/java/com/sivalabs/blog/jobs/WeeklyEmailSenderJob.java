@@ -1,20 +1,19 @@
 package com.sivalabs.blog.jobs;
 
 import com.sivalabs.blog.notification.EmailService;
-import com.sivalabs.blog.posts.domain.models.PostDto;
 import com.sivalabs.blog.posts.PostsAPI;
-import com.sivalabs.blog.users.domain.models.UserDto;
+import com.sivalabs.blog.posts.domain.models.PostDto;
 import com.sivalabs.blog.users.UsersAPI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
+import com.sivalabs.blog.users.domain.models.UserDto;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 @Component
 class WeeklyEmailSenderJob {

@@ -1,29 +1,29 @@
 package com.sivalabs.blog.posts.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.sivalabs.blog.AbstractIT;
 import com.sivalabs.blog.posts.domain.models.CommentDto;
 import com.sivalabs.blog.posts.domain.models.PostDto;
 import com.sivalabs.blog.shared.models.PagedResult;
 import com.sivalabs.blog.users.domain.models.Role;
 import com.sivalabs.blog.users.domain.models.UserDto;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class PostControllerTests extends AbstractIT {
 
     @Test
     void shouldGetPosts() {
-        PagedResult<PostDto> result = restTestClient.get()
+        PagedResult<PostDto> result = restTestClient
+                .get()
                 .uri("/api/posts")
                 .exchange()
-                .expectStatus().isOk()
-                .returnResult(new ParameterizedTypeReference<PagedResult<PostDto>>() {
-                })
+                .expectStatus()
+                .isOk()
+                .returnResult(new ParameterizedTypeReference<PagedResult<PostDto>>() {})
                 .getResponseBody();
 
         assertThat(result).isNotNull();
@@ -37,25 +37,27 @@ class PostControllerTests extends AbstractIT {
 
     @Test
     void shouldSearchPosts() {
-        PagedResult<PostDto> result = restTestClient.get()
+        PagedResult<PostDto> result = restTestClient
+                .get()
                 .uri("/api/posts?query=spring")
                 .exchange()
-                .expectStatus().isOk()
-                .returnResult(new ParameterizedTypeReference<PagedResult<PostDto>>() {
-                })
+                .expectStatus()
+                .isOk()
+                .returnResult(new ParameterizedTypeReference<PagedResult<PostDto>>() {})
                 .getResponseBody();
 
         assertThat(result).isNotNull();
         assertThat(result.data()).hasSize(4);
-
     }
 
     @Test
     void shouldGetPostBySlug() {
-        PostDto postDto = restTestClient.get()
+        PostDto postDto = restTestClient
+                .get()
                 .uri("/api/posts/{slug}", "introducing-springboot")
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus()
+                .isOk()
                 .returnResult(PostDto.class)
                 .getResponseBody();
 
@@ -67,10 +69,12 @@ class PostControllerTests extends AbstractIT {
 
     @Test
     void shouldReturnNotFoundWhenPostSlugDoesNotExist() {
-        String response = restTestClient.get()
+        String response = restTestClient
+                .get()
                 .uri("/api/posts/{slug}", "missing-post-slug")
                 .exchange()
-                .expectStatus().isNotFound()
+                .expectStatus()
+                .isNotFound()
                 .returnResult(String.class)
                 .getResponseBody();
 
@@ -80,12 +84,13 @@ class PostControllerTests extends AbstractIT {
 
     @Test
     void shouldGetPostComments() {
-        List<CommentDto> commentDtos = restTestClient.get()
+        List<CommentDto> commentDtos = restTestClient
+                .get()
                 .uri("/api/posts/{slug}/comments", "introducing-springboot")
                 .exchange()
-                .expectStatus().isOk()
-                .returnResult(new ParameterizedTypeReference<List<CommentDto>>() {
-                })
+                .expectStatus()
+                .isOk()
+                .returnResult(new ParameterizedTypeReference<List<CommentDto>>() {})
                 .getResponseBody();
 
         assertThat(commentDtos).hasSize(2);
@@ -93,10 +98,12 @@ class PostControllerTests extends AbstractIT {
 
     @Test
     void shouldReturnNotFoundWhenGettingCommentsForUnknownPost() {
-        String response = restTestClient.get()
+        String response = restTestClient
+                .get()
                 .uri("/api/posts/{slug}/comments", "missing-post-slug")
                 .exchange()
-                .expectStatus().isNotFound()
+                .expectStatus()
+                .isNotFound()
                 .returnResult(String.class)
                 .getResponseBody();
 

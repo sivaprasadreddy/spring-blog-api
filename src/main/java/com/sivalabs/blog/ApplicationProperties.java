@@ -3,12 +3,11 @@ package com.sivalabs.blog;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
-
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 
 @ConfigurationProperties(prefix = "blog")
 @Validated
@@ -36,8 +35,7 @@ public record ApplicationProperties(
     public record OpenAPIProperties(
             @DefaultValue("Blog API") String title,
 
-            @DefaultValue("Blog API Swagger Documentation")
-            String description,
+            @DefaultValue("Blog API Swagger Documentation") String description,
 
             @DefaultValue("v1.0.0") String version,
             @Valid OpenAPIProperties.Contact contact) {

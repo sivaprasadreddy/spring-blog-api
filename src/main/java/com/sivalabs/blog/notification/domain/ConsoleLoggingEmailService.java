@@ -2,13 +2,12 @@ package com.sivalabs.blog.notification.domain;
 
 import com.sivalabs.blog.ApplicationProperties;
 import com.sivalabs.blog.notification.EmailService;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @ConditionalOnProperty(name = "blog.email-service-type", havingValue = "console")
@@ -19,7 +18,6 @@ public class ConsoleLoggingEmailService implements EmailService {
     public ConsoleLoggingEmailService(ApplicationProperties properties) {
         this.properties = properties;
     }
-
 
     @Async
     public void send(String to, String subject, String content) {
@@ -34,7 +32,7 @@ public class ConsoleLoggingEmailService implements EmailService {
                 From: %s
                 To: %s
                 Subject: %s
-                
+
                 %s
                 ======================================================
                 """.formatted(supportEmail, to, subject, content);

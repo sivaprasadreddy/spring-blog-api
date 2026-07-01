@@ -1,17 +1,16 @@
 package com.sivalabs.blog.posts.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.sivalabs.blog.AbstractIT;
 import com.sivalabs.blog.posts.domain.models.PostDto;
 import com.sivalabs.blog.shared.models.PagedResult;
 import com.sivalabs.blog.users.domain.models.Role;
 import com.sivalabs.blog.users.domain.models.UserDto;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class PostControllerMockMvcTests extends AbstractIT {
     @Test
