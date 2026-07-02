@@ -13,6 +13,8 @@ interface PostProjection {
 
     Long getCreatedBy();
 
+    String getAuthor();
+
     LocalDateTime getCreatedAt();
 
     LocalDateTime getUpdatedAt();

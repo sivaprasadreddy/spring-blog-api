@@ -26,7 +26,8 @@ Fetch a single post by unique slug.
   "title": "SpringBoot: Introducing SpringBoot",
   "slug": "introducing-springboot",
   "content": "...",
-  "createdBy": 2,
+  "authorId": 2,
+  "authorName": "Siva",
   "createdAt": "2014-06-20T00:00:00",
   "updatedAt": null
 }

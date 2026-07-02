@@ -43,29 +43,25 @@ public class PostService {
     @Transactional(readOnly = true)
     public PagedResult<PostDto> findPosts(int pageNo) {
         Pageable pageable = this.getPageRequest(pageNo);
-        Page<PostDto> posts = postRepository.findPosts(pageable).map(postMapper::toPostDto);
+        Page<PostDto> posts = postRepository.findPosts(pageable);
         return PagedResult.from(posts);
     }
 
     @Transactional(readOnly = true)
     public PagedResult<PostDto> searchPosts(String query, int pageNo) {
         Pageable pageable = this.getPageRequest(pageNo);
-        Page<PostDto> posts = postRepository
-                .searchPosts("%" + query.toLowerCase() + "%", pageable)
-                .map(postMapper::toPostDto);
+        Page<PostDto> posts = postRepository.searchPosts("%" + query.toLowerCase() + "%", pageable);
         return PagedResult.from(posts);
     }
 
     @Transactional(readOnly = true)
     public List<PostDto> findPostsCreatedBetween(LocalDateTime start, LocalDateTime end) {
-        return postRepository.findByCreatedDate(start, end).stream()
-                .map(postMapper::toPostDto)
-                .toList();
+        return postRepository.findByCreatedDate(start, end);
     }
 
     @Transactional(readOnly = true)
     public Optional<PostDto> findPostBySlug(String slug) {
-        return postRepository.findBySlug(slug).map(postMapper::toPostDto);
+        return postRepository.findBySlug(slug);
     }
 
     @Transactional

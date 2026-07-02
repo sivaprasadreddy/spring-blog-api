@@ -7,6 +7,7 @@ public record PostDto(
         String title,
         String slug,
         String content,
-        Long createdBy,
+        Long authorId,
+        String authorName,
         LocalDateTime createdAt,
         LocalDateTime updatedAt) {}
