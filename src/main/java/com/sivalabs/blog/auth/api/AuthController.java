@@ -7,9 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,11 +41,4 @@ class AuthController {
                 authResponse.email(),
                 authResponse.role());
     }
-
-    public record LoginRequest(
-            @NotEmpty(message = "Email is required") @Email(message = "Invalid email address") String email,
-
-            @NotEmpty(message = "Password is required") String password) {}
-
-    public record LoginResponse(String token, Instant expiresAt, Long userId, String name, String email, String role) {}
 }

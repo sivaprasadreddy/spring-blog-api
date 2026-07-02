@@ -10,7 +10,7 @@ class UserControllerTests extends AbstractIT {
 
     @Test
     void shouldCreateUserSuccessfully() {
-        UserController.RegistrationResponse response = restTestClient
+        CreateUserResponse response = restTestClient
                 .post()
                 .uri("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -24,7 +24,7 @@ class UserControllerTests extends AbstractIT {
                 .exchange()
                 .expectStatus()
                 .isCreated()
-                .returnResult(UserController.RegistrationResponse.class)
+                .returnResult(CreateUserResponse.class)
                 .getResponseBody();
 
         assertThat(response).isNotNull();

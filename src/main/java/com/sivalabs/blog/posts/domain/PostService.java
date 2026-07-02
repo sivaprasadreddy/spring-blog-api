@@ -9,6 +9,7 @@ import com.sivalabs.blog.users.UsersAPI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final UsersAPI usersAPI;
     private final PostMapper postMapper;
-    private final BlogEventPublisher blogEventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
     private final ApplicationProperties properties;
 
     PostService(
@@ -30,13 +31,13 @@ public class PostService {
             CommentRepository commentRepository,
             UsersAPI usersAPI,
             PostMapper postMapper,
-            BlogEventPublisher blogEventPublisher,
+            ApplicationEventPublisher eventPublisher,
             ApplicationProperties properties) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.usersAPI = usersAPI;
         this.postMapper = postMapper;
-        this.blogEventPublisher = blogEventPublisher;
+        this.eventPublisher = eventPublisher;
         this.properties = properties;
     }
 
@@ -79,7 +80,7 @@ public class PostService {
         postRepository.save(entity);
 
         var event = new PostPublishedEvent(entity.getTitle(), entity.getSlug(), entity.getContent());
-        blogEventPublisher.publish(event);
+        eventPublisher.publishEvent(event);
     }
 
     @Transactional

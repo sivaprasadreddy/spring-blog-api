@@ -10,7 +10,7 @@ class AuthControllerTests extends AbstractIT {
 
     @Test
     void shouldLoginSuccessfully() {
-        AuthController.LoginResponse response = restTestClient
+        LoginResponse response = restTestClient
                 .post()
                 .uri("/api/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -23,7 +23,7 @@ class AuthControllerTests extends AbstractIT {
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .returnResult(AuthController.LoginResponse.class)
+                .returnResult(LoginResponse.class)
                 .getResponseBody();
 
         assertThat(response).isNotNull();

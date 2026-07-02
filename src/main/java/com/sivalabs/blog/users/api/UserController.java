@@ -10,8 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -35,20 +33,11 @@ class UserController {
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Created user successfully"),
     })
-    ResponseEntity<RegistrationResponse> createUser(@RequestBody @Valid RegistrationRequest req) {
-        LOG.info("Registration request for email: {}", req.email());
+    ResponseEntity<CreateUserResponse> createUser(@RequestBody @Valid CreateUserRequest req) {
+        LOG.info("Create user request for email: {}", req.email());
         var cmd = new CreateUserCmd(req.name(), req.email(), req.password(), Role.ROLE_USER);
         userService.createUser(cmd);
-        var response = new RegistrationResponse(req.name(), req.email(), Role.ROLE_USER);
+        var response = new CreateUserResponse(req.name(), req.email(), Role.ROLE_USER);
         return ResponseEntity.status(CREATED.value()).body(response);
     }
-
-    public record RegistrationRequest(
-            @NotBlank(message = "Name is required") String name,
-
-            @NotBlank(message = "Email is required") @Email(message = "Invalid email address") String email,
-
-            @NotBlank(message = "Password is required") String password) {}
-
-    public record RegistrationResponse(String name, String email, Role role) {}
 }

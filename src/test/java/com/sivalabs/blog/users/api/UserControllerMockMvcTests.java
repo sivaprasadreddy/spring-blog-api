@@ -28,7 +28,7 @@ class UserControllerMockMvcTests extends AbstractIT {
         assertThat(testResult)
                 .hasStatus(CREATED)
                 .bodyJson()
-                .convertTo(UserController.RegistrationResponse.class)
+                .convertTo(CreateUserResponse.class)
                 .satisfies(response -> {
                     assertThat(response).isNotNull();
                     assertThat(response.name()).isEqualTo("User123");

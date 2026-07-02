@@ -26,7 +26,7 @@ class AuthControllerMockMvcTests extends AbstractIT {
         assertThat(testResult)
                 .hasStatusOk()
                 .bodyJson()
-                .convertTo(AuthController.LoginResponse.class)
+                .convertTo(LoginResponse.class)
                 .satisfies(response -> {
                     assertThat(response).isNotNull();
                     assertThat(response.name()).isEqualTo("Siva Prasad");
