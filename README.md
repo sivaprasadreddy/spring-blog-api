@@ -2,7 +2,12 @@
 
 A REST API for a blog application using SpringBoot.
 
-## Tech Stack:
+[![Maven Build](https://github.com/sivaprasadreddy/spring-blog-api/actions/workflows/maven.yml/badge.svg)](https://github.com/sivaprasadreddy/spring-blog-api/actions/workflows/maven.yml)
+
+You can find the frontend application(s) using this REST API in the following repositories:
+- [blog-angular](https://github.com/sivaprasadreddy/blog-angular)
+
+## Tech Stack
 * Java
 * Spring Boot
 * Spring Modulith
