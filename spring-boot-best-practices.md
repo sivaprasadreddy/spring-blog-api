@@ -479,20 +479,284 @@ class ModularityTests {
 
 ---
 
+## Configuration Classes
+
+Configuration classes live in the `config` package at the root of the application. They are **package-private** — they configure Spring beans but are never referenced directly from other code.
+
+**Rules:**
+- Annotate with `@Configuration`. Add feature-enabling annotations (`@EnableAsync`, `@EnableJpaAuditing`, etc.) on their own dedicated, single-purpose config class rather than piling them onto one class.
+- Keep config classes package-private. Bean methods can also be package-private — Spring discovers them through reflection.
+- Use constructor injection (or method parameters on `@Bean` methods) rather than field injection.
+- Avoid putting unrelated beans in the same config class. Prefer one config class per concern.
+
+**Example:**
+
+```java
+// config/AsyncConfig.java — single responsibility
+@Configuration
+@EnableAsync
+class AsyncConfig {}
+
+// config/PersistenceConfig.java — single responsibility
+@Configuration
+@EnableJpaAuditing
+class PersistenceConfig {}
+
+// config/WebSecurityConfig.java — security chain only
+@Configuration
+@EnableWebSecurity
+class WebSecurityConfig {
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.securityMatcher("/api/**");
+        http.csrf(CsrfConfigurer::disable);
+        http.sessionManagement(s -> s.sessionCreationPolicy(STATELESS));
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                .anyRequest().authenticated());
+        http.oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()));
+        http.exceptionHandling(c ->
+                c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+        return http.build();
+    }
+}
+
+// config/OpenApiConfig.java — reads ApplicationProperties via @Bean method parameter
+@Configuration
+class OpenApiConfig {
+
+    @Bean
+    OpenAPI openApi(ApplicationProperties props) {
+        var api = props.openApi();
+        return new OpenAPI()
+                .info(new Info().title(api.title()).version(api.version()));
+    }
+}
+```
+
+---
+
+## Configuration Properties
+
+Bind all custom application properties to a **`@ConfigurationProperties` record** rather than scattering `@Value` annotations across classes. Place it at the root application package so it is visible to all modules.
+
+```java
+// ApplicationProperties.java
+@ConfigurationProperties(prefix = "app")
+@Validated
+public record ApplicationProperties(
+        @DefaultValue("10") int pageSize,
+        @Valid JwtProperties jwt,
+        @Valid CorsProperties cors) {
+
+    public record JwtProperties(
+            @NotEmpty String issuer,
+            @NotNull Long expiresInSeconds,
+            @NotNull RSAPublicKey publicKey,
+            @NotNull RSAPrivateKey privateKey) {}
+
+    public record CorsProperties(
+            @DefaultValue("/api/**") String pathPattern,
+            @DefaultValue("*") String allowedOrigins,
+            @DefaultValue("*") String allowedMethods) {}
+}
+```
+
+Enable it in the main application class:
+
+```java
+@SpringBootApplication
+@ConfigurationPropertiesScan
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+}
+```
+
+Inject `ApplicationProperties` as a constructor parameter wherever the properties are needed:
+
+```java
+@Service
+public class OrderService {
+    private final ApplicationProperties properties;
+
+    OrderService(OrderRepository repo, ApplicationProperties properties) {
+        this.repo = repo;
+        this.properties = properties;
+    }
+
+    public PagedResult<OrderDto> findOrders(int pageNo) {
+        var pageable = PageRequest.of(pageNo - 1, properties.pageSize());
+        ...
+    }
+}
+```
+
+**Rules:**
+- Use `@Validated` + Jakarta Validation constraints (`@NotEmpty`, `@NotNull`) on the record to fail fast at startup when required properties are missing.
+- Use `@DefaultValue` for optional properties with sensible defaults.
+- Use nested records to group related properties (jwt, cors, mail, etc.).
+- Never use `@Value` for application-specific settings — use `@ConfigurationProperties` records. Reserve `@Value` only for simple Spring/infrastructure property references where a full record would be overkill.
+- Corresponding properties file:
+
+```properties
+app.page-size=10
+app.jwt.issuer=MyApp
+app.jwt.expires-in-seconds=604800
+app.jwt.public-key=classpath:certs/public.pem
+app.jwt.private-key=classpath:certs/private.pem
+app.cors.path-pattern=/api/**
+app.cors.allowed-origins=https://myapp.example.com
+```
+
+---
+
+## Accessing the Authenticated User
+
+In JWT-secured APIs, extract the current user from the `SecurityContext` in a dedicated utility class rather than repeating the extraction logic in every controller.
+
+```java
+// auth/SecurityUtils.java
+public final class SecurityUtils {
+    private SecurityUtils() {}
+
+    public static Long getCurrentUserIdOrThrow() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            throw new AccessDeniedException("Access denied");
+        }
+        if (auth.getPrincipal() instanceof Jwt jwt) {
+            Long userId = jwt.getClaim("user_id");
+            if (userId != null) return userId;
+        }
+        throw new AccessDeniedException("Access denied");
+    }
+}
+```
+
+Usage in a controller:
+
+```java
+@PostMapping("")
+ResponseEntity<Void> createOrder(@Valid @RequestBody CreateOrderRequest request) {
+    Long userId = SecurityUtils.getCurrentUserIdOrThrow();
+    var cmd = new CreateOrderCmd(request.reference(), userId);
+    orderService.createOrder(cmd);
+    ...
+}
+```
+
+**For Spring MVC with session-based auth**, prefer injecting the principal via a method parameter instead:
+
+```java
+@GetMapping("/me/orders")
+List<OrderDto> myOrders(@AuthenticationPrincipal UserDetails user) {
+    return orderService.findOrdersByUser(user.getUsername());
+}
+```
+
+**Rules:**
+- Extract auth-related boilerplate into a utility class or resolved argument — never duplicate it across controllers.
+- Pass only the resolved user ID (or username) to the service layer. Services must not access `SecurityContextHolder` directly; keep security concerns in the `api` and `auth` packages.
+- Services receive the user identity as part of a command object, not via a thread-local.
+
+---
+
+## Profile-Specific Properties Files
+
+Use Spring's profile mechanism to override properties per environment without modifying the base configuration.
+
+**File naming convention:**
+
+```
+src/main/resources/
+├── application.properties          ← base config, applies to all environments
+├── application-local.properties    ← local dev overrides (docker compose, verbose logging)
+└── application-prod.properties     ← production overrides (if not using env vars)
+
+src/test/resources/
+└── application-test.properties     ← test-specific overrides
+```
+
+**`application.properties`** — defaults and required structure:
+
+```properties
+spring.application.name=my-app
+server.port=8080
+
+# Placeholders resolved from env vars at runtime; local defaults for convenience
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/mydb}
+spring.datasource.username=${DB_USERNAME:postgres}
+spring.datasource.password=${DB_PASSWORD:postgres}
+
+# Expose only safe actuator endpoints in the base config
+management.endpoints.web.exposure.include=info,health
+management.endpoint.health.probes.enabled=true
+
+# Disable open-session-in-view to avoid lazy-loading surprises
+spring.jpa.open-in-view=false
+spring.jpa.hibernate.ddl-auto=validate
+```
+
+**`application-local.properties`** — local developer overrides:
+
+```properties
+# Expose all actuator endpoints locally for debugging
+management.endpoints.web.exposure.include=*
+logging.level.org.springframework.security=DEBUG
+```
+
+**`application-test.properties`** — test environment overrides:
+
+```properties
+# Use immediate shutdown to speed up test teardown
+server.shutdown=immediate
+logging.level.org.springframework.security=DEBUG
+```
+
+**Activating profiles:**
+
+```bash
+# IDE / local run
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+
+# Production
+java -jar app.jar --spring.profiles.active=prod
+
+# Tests — set on the base test class
+@ActiveProfiles("test")
+public abstract class AbstractIT { ... }
+```
+
+**Rules:**
+- The base `application.properties` must work without any profile active (using reasonable defaults or environment variable placeholders).
+- Never commit secrets (passwords, API keys) to any properties file. Use environment variables or a secrets manager in production.
+- `local` profile is for developer convenience only — it is never active in CI or production.
+- `test` profile is activated via `@ActiveProfiles("test")` on the `AbstractIT` base class; it should only contain overrides that make the test suite faster or more deterministic.
+- Prefer environment variable placeholders (`${DB_URL:default}`) over hard-coded values in the base config to make the app 12-factor friendly.
+
+---
+
 ## Summary
 
-| Concern             | Decision                                                                    |
-|---------------------|-----------------------------------------------------------------------------|
-| Package structure   | Feature-module packages; no top-level layer packages                        |
-| Cross-module access | Through `public *API` facade classes only                                   |
-| Default visibility  | Package-private; only services and module APIs are `public`                 |
-| JPA entities        | Package-private; used only inside the `domain` layer                        |
-| DTOs                | Immutable records; live in `{module}/domain/models/`                        |
-| Conversion layer    | Repository (JPQL constructor) or service (MapStruct); never controller      |
-| Request modeling    | Package-private records with Jakarta Validation in the `api` package        |
-| Command objects     | Intermediate records; created in controller, consumed by service            |
-| Response modeling   | Domain DTOs returned directly or wrapped in `ResponseEntity`/`PagedResult`  |
-| Error handling      | `GlobalExceptionHandler` with RFC 7807 `ProblemDetail`                      |
-| Test data           | `@Sql` with fixed IDs and sequence resets to avoid collision                |
-| Containers          | Testcontainers with `@ServiceConnection` in a shared `TestcontainersConfig` |
-| Test style          | `RestTestClient` + `MockMvcTester`; shared `AbstractIT` base class          |
+| Concern                  | Decision                                                                    |
+|--------------------------|-----------------------------------------------------------------------------|
+| Package structure        | Feature-module packages; no top-level layer packages                        |
+| Cross-module access      | Through `public *API` facade classes only                                   |
+| Default visibility       | Package-private; only services and module APIs are `public`                 |
+| JPA entities             | Package-private; used only inside the `domain` layer                        |
+| DTOs                     | Immutable records; live in `{module}/domain/models/`                        |
+| Conversion layer         | Repository (JPQL constructor) or service (MapStruct); never controller      |
+| Request modeling         | Package-private records with Jakarta Validation in the `api` package        |
+| Command objects          | Intermediate records; created in controller, consumed by service            |
+| Response modeling        | Domain DTOs returned directly or wrapped in `ResponseEntity`/`PagedResult`  |
+| Error handling           | `GlobalExceptionHandler` with RFC 7807 `ProblemDetail`                      |
+| Configuration classes    | Package-private; one class per concern; no `@Value` for app properties      |
+| Configuration properties | `@ConfigurationProperties` record with `@Validated`; injected as a bean     |
+| Authenticated user       | `SecurityUtils` utility class; pass user ID in command objects to service   |
+| Profile properties       | `application-{profile}.properties`; `local` for dev, `test` for tests       |
+| Test data                | `@Sql` with fixed IDs and sequence resets to avoid collision                |
+| Containers               | Testcontainers with `@ServiceConnection` in a shared `TestcontainersConfig` |
+| Test style               | `RestTestClient` + `MockMvcTester`; shared `AbstractIT` base class          |
