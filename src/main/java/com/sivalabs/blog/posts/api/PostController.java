@@ -9,18 +9,18 @@ import com.sivalabs.blog.shared.models.PagedResult;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping(value = "/api")
 @Tag(name = "Posts API")
 class PostController {
     private static final Logger LOG = LoggerFactory.getLogger(PostController.class);
@@ -30,7 +30,7 @@ class PostController {
         this.postService = postService;
     }
 
-    @GetMapping("")
+    @GetMapping("/posts")
     PagedResult<PostDto> findPosts(
             @RequestParam(value = "query", defaultValue = "") String query,
             @RequestParam(value = "page", defaultValue = "1") int page) {
@@ -41,7 +41,7 @@ class PostController {
         return postService.searchPosts(query, page);
     }
 
-    @GetMapping("/{slug}")
+    @GetMapping("/posts/{slug}")
     ResponseEntity<PostDto> getPostBySlug(@PathVariable String slug) {
         LOG.info("Get post by slug='{}'", slug);
         var post = postService
@@ -50,27 +50,7 @@ class PostController {
         return ResponseEntity.ok(post);
     }
 
-    @GetMapping("/{slug}/comments")
-    List<CommentDto> getPostComments(@PathVariable String slug) {
-        LOG.info("Get post comments by slug='{}'", slug);
-        PostDto postDto = postService
-                .findPostBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Post with slug '" + slug + "' not found"));
-        return postService.getCommentsByPostId(postDto.id());
-    }
-
-    @PostMapping("/{slug}/comments")
-    @ResponseStatus(HttpStatus.CREATED)
-    void createComment(@PathVariable String slug, @Valid @RequestBody CreateCommentPayload payload) {
-        LOG.info("Create comment for post with slug: '{}'", slug);
-        PostDto postDto = postService
-                .findPostBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Post with slug '" + slug + "' not found"));
-        var createdCommentCmd = new CreateCommentCmd(payload.name(), payload.email(), payload.content(), postDto.id());
-        postService.createComment(createdCommentCmd);
-    }
-
-    @PostMapping("")
+    @PostMapping(value = "/posts", consumes = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Bearer")
     ResponseEntity<Void> createPost(@Valid @RequestBody PostPayload postPayload) {
         var loginUserId = AuthUtils.getCurrentUserIdOrThrow();
@@ -86,7 +66,7 @@ class PostController {
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/{slug}")
+    @PutMapping(value = "/posts/{slug}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Bearer")
     ResponseEntity<Void> updatePost(@PathVariable String slug, @Valid @RequestBody PostPayload postPayload) {
         LOG.info("Updating post with slug: '{}'", slug);
@@ -107,5 +87,41 @@ class PostController {
                 .buildAndExpand(updatedSlug)
                 .toUri();
         return ResponseEntity.status(HttpStatus.OK).location(location).build();
+    }
+
+    @GetMapping("/posts/{slug}/comments")
+    PagedResult<CommentDto> getPostComments(
+            @PathVariable String slug, @RequestParam(value = "page", defaultValue = "1") int page) {
+        LOG.info("Get post comments by slug='{}'", slug);
+        PostDto postDto = postService
+                .findPostBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException("Post with slug '" + slug + "' not found"));
+        return postService.getCommentsByPostId(postDto.id(), page);
+    }
+
+    @PostMapping(value = "/posts/{slug}/comments", consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Void> createComment(@PathVariable String slug, @Valid @RequestBody CreateCommentPayload payload) {
+        LOG.info("Create comment for post with slug: '{}'", slug);
+        PostDto postDto = postService
+                .findPostBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException("Post with slug '" + slug + "' not found"));
+        var createdCommentCmd = new CreateCommentCmd(payload.name(), payload.email(), payload.content(), postDto.id());
+        CommentDto comment = postService.createComment(createdCommentCmd);
+        var location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .replacePath(null)
+                .path("/api/comments/{commentId}")
+                .buildAndExpand(comment.id())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/comments/{commentId}")
+    ResponseEntity<CommentDto> getCommentById(@PathVariable Long commentId) {
+        LOG.info("Get comment by commentId={}", commentId);
+        CommentDto commentDto = postService
+                .getCommentById(commentId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Comment with commentId '" + commentId + "' not found"));
+        return ResponseEntity.ok(commentDto);
     }
 }

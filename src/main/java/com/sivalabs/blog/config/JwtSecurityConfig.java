@@ -6,7 +6,6 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.sivalabs.blog.ApplicationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -26,10 +25,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 
 @Configuration
 class JwtSecurityConfig {
-    private final ApplicationProperties properties;
+    private final JwtProperties jwtProperties;
 
-    JwtSecurityConfig(ApplicationProperties properties) {
-        this.properties = properties;
+    JwtSecurityConfig(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
     }
 
     @Bean
@@ -52,13 +51,13 @@ class JwtSecurityConfig {
 
     @Bean
     JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(properties.jwt().publicKey()).build();
+        return NimbusJwtDecoder.withPublicKey(jwtProperties.publicKey()).build();
     }
 
     @Bean
     JwtEncoder jwtEncoder() {
-        JWK jwk = new RSAKey.Builder(properties.jwt().publicKey())
-                .privateKey(properties.jwt().privateKey())
+        JWK jwk = new RSAKey.Builder(jwtProperties.publicKey())
+                .privateKey(jwtProperties.privateKey())
                 .build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);

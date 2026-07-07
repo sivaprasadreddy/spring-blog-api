@@ -7,7 +7,6 @@ import com.sivalabs.blog.posts.domain.models.PostDto;
 import com.sivalabs.blog.shared.models.PagedResult;
 import com.sivalabs.blog.users.domain.models.Role;
 import com.sivalabs.blog.users.domain.models.UserDto;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -73,9 +72,15 @@ class PostControllerMockMvcTests extends AbstractIT {
                 .assertThat()
                 .hasStatusOk()
                 .bodyJson()
-                .convertTo(List.class)
-                .satisfies(commentDtos -> {
-                    assertThat(commentDtos).hasSize(2);
+                .convertTo(PagedResult.class)
+                .satisfies(result -> {
+                    assertThat(result).isNotNull();
+                    assertThat(result.data()).hasSize(2);
+                    assertThat(result.currentPageNo()).isEqualTo(1);
+                    assertThat(result.totalPages()).isEqualTo(1);
+                    assertThat(result.totalElements()).isEqualTo(2);
+                    assertThat(result.hasNextPage()).isFalse();
+                    assertThat(result.hasPreviousPage()).isFalse();
                 });
     }
 

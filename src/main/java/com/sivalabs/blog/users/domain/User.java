@@ -3,6 +3,7 @@ package com.sivalabs.blog.users.domain;
 import com.sivalabs.blog.shared.entities.BaseEntity;
 import com.sivalabs.blog.users.domain.models.Role;
 import jakarta.persistence.*;
+import org.hibernate.annotations.NaturalId;
 
 @Entity
 @Table(name = "users")
@@ -17,6 +18,7 @@ class User extends BaseEntity {
     private String name;
 
     @Column(nullable = false, unique = true)
+    @NaturalId
     private String email;
 
     @Column(nullable = false)

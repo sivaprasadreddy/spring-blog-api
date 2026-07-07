@@ -1,21 +1,19 @@
 package com.sivalabs.blog.config;
 
-import com.sivalabs.blog.ApplicationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 class WebMvcConfig implements WebMvcConfigurer {
-    private final ApplicationProperties properties;
+    private final CorsProperties corsProperties;
 
-    WebMvcConfig(ApplicationProperties properties) {
-        this.properties = properties;
+    WebMvcConfig(CorsProperties corsProperties) {
+        this.corsProperties = corsProperties;
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        var corsProperties = properties.cors();
         registry.addMapping(corsProperties.pathPattern())
                 .allowedOriginPatterns(corsProperties.allowedOrigins())
                 .allowedMethods(corsProperties.allowedMethods())

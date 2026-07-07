@@ -8,7 +8,6 @@ import com.sivalabs.blog.posts.domain.models.PostDto;
 import com.sivalabs.blog.shared.models.PagedResult;
 import com.sivalabs.blog.users.domain.models.Role;
 import com.sivalabs.blog.users.domain.models.UserDto;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -84,16 +83,17 @@ class PostControllerTests extends AbstractIT {
 
     @Test
     void shouldGetPostComments() {
-        List<CommentDto> commentDtos = restTestClient
+        PagedResult<CommentDto> result = restTestClient
                 .get()
                 .uri("/api/posts/{slug}/comments", "introducing-springboot")
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .returnResult(new ParameterizedTypeReference<List<CommentDto>>() {})
+                .returnResult(new ParameterizedTypeReference<PagedResult<CommentDto>>() {})
                 .getResponseBody();
 
-        assertThat(commentDtos).hasSize(2);
+        assertThat(result).isNotNull();
+        assertThat(result.data()).hasSize(2);
     }
 
     @Test

@@ -9,11 +9,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping(value = "/api")
 @Tag(name = "Auth API")
 class AuthController {
     private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
@@ -23,7 +26,7 @@ class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/api/login")
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Authenticate user")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Returns successful authentication response"),

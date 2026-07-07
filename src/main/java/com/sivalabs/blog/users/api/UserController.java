@@ -12,12 +12,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping(value = "/api")
 @Tag(name = "Users API")
 class UserController {
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
@@ -28,7 +31,7 @@ class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/api/users")
+    @PostMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create user")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Created user successfully"),

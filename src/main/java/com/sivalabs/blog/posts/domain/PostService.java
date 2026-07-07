@@ -95,14 +95,14 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentDto> getCommentsByPostId(Long postId) {
-        return commentRepository.findByPostId(postId).stream()
-                .map(postMapper::toCommentDto)
-                .toList();
+    public PagedResult<CommentDto> getCommentsByPostId(Long postId, int pageNo) {
+        Pageable pageable = this.getPageRequest(pageNo);
+        var comments = commentRepository.findByPostId(postId, pageable).map(postMapper::toCommentDto);
+        return PagedResult.from(comments);
     }
 
     @Transactional
-    public void createComment(CreateCommentCmd cmd) {
+    public CommentDto createComment(CreateCommentCmd cmd) {
         var post = postRepository.getReferenceById(cmd.postId());
         var entity = new Comment();
         entity.setName(cmd.name());
@@ -110,11 +110,16 @@ public class PostService {
         entity.setContent(cmd.content());
         entity.setPost(post);
         commentRepository.save(entity);
+        return postMapper.toCommentDto(entity);
+    }
+
+    public Optional<CommentDto> getCommentById(Long commentId) {
+        return commentRepository.findById(commentId).map(postMapper::toCommentDto);
     }
 
     private Pageable getPageRequest(int pageNo) {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        int pageSize = properties.postsPerPage();
+        int pageSize = properties.pageSize();
         if (pageNo < 1) {
             pageNo = 1;
         }

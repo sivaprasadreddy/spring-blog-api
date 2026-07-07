@@ -1,6 +1,5 @@
 package com.sivalabs.blog.config;
 
-import com.sivalabs.blog.ApplicationProperties;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -14,8 +13,7 @@ import org.springframework.context.annotation.Configuration;
 class OpenApiConfig {
 
     @Bean
-    OpenAPI openApi(ApplicationProperties properties) {
-        var openApiProps = properties.openApi();
+    OpenAPI openApi(OpenApiProperties openApiProps) {
         Contact contact = new Contact()
                 .name(openApiProps.contact().name())
                 .email(openApiProps.contact().email());
