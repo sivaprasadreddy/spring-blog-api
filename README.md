@@ -4,15 +4,31 @@ A REST API for a blog application using SpringBoot.
 
 [![Maven Build](https://github.com/sivaprasadreddy/spring-blog-api/actions/workflows/maven.yml/badge.svg)](https://github.com/sivaprasadreddy/spring-blog-api/actions/workflows/maven.yml)
 
-You can find the frontend application(s) using this REST API in the following repositories:
-- [blog-angular](https://github.com/sivaprasadreddy/blog-angular)
+> [!NOTE]  
+> You can find the frontend application(s) using this REST API in the following repositories:
+> - [blog-angular](https://github.com/sivaprasadreddy/blog-angular)
+
+## Documentation
+* [Project Overview](docs/project.md)
+* [Requirements](docs/requirements.md)
+* [REST API Docs](docs/rest-apis.md)
+* [Spring Boot Best Practices](docs/spring-boot-best-practices.md)
 
 ## Tech Stack
-* Java
-* Spring Boot
-* Spring Modulith
-* Spring Data JPA
-* Spring Security
+* Language: Java 25
+* Framework: Spring Boot 4.x
+* Web/API: Spring Web MVC
+* Security: Spring Security + OAuth2 Resource Server + JWT (RSA keys)
+* Validation: Jakarta Bean Validation
+* Persistence: Spring Data JPA + Hibernate
+* Database: PostgreSQL
+* Migrations: Flyway
+* Mapping: MapStruct
+* Modular architecture/events: Spring Modulith
+* Email: Spring Mail (JavaMail) + Console email adapter
+* API docs: springdoc OpenAPI / Swagger UI
+* Build: Maven
+* Testing: JUnit 5, Spring Boot test starters, Testcontainers
 
 ## Prerequisites
 * JDK 25
