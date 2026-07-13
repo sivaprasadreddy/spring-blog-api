@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,11 +87,20 @@ public class PostService {
     @Transactional
     public void updatePost(UpdatePostCmd cmd) {
         var entity = postRepository
-                .findById(cmd.id())
-                .orElseThrow(() -> new ResourceNotFoundException("Post with id " + cmd.id() + " not found"));
-        entity.setTitle(cmd.title());
-        entity.setSlug(cmd.slug());
-        entity.setContent(cmd.content());
+                .findEntityBySlug(cmd.slug())
+                .orElseThrow(() -> new ResourceNotFoundException("Post with slug '" + cmd.slug() + "' not found"));
+
+        if (!entity.getCreatedBy().equals(cmd.userId())) {
+            throw new AccessDeniedException("Only the post owner can modify the post");
+        }
+
+        if (!cmd.newSlug().equals(entity.getSlug()) && postRepository.existsBySlug(cmd.newSlug())) {
+            throw new BadRequestException("Post with slug %s already exists".formatted(cmd.newSlug()));
+        }
+
+        entity.setTitle(cmd.newTitle());
+        entity.setSlug(cmd.newSlug());
+        entity.setContent(cmd.newContent());
         postRepository.save(entity);
     }
 

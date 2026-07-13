@@ -1,3 +1,3 @@
 package com.sivalabs.blog.posts.domain.models;
 
-public record UpdatePostCmd(Long id, String title, String slug, String content, Long userId) {}
+public record UpdatePostCmd(String slug, String newTitle, String newSlug, String newContent, Long userId) {}

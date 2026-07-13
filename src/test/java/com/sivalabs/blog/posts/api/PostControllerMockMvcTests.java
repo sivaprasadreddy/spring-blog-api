@@ -133,7 +133,7 @@ class PostControllerMockMvcTests extends AbstractIT {
               "content":"Installing LinuxMint 22"
             }
             """;
-        UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
+        UserDto userDto = new UserDto(1L, "Administrator", "admin@gmail.com", "", Role.ROLE_ADMIN);
         String token = this.createToken(userDto);
 
         mvc.put()
