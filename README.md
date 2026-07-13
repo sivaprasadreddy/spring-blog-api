@@ -35,11 +35,20 @@ $ sdk install maven
 $ ./mvnw test
 
 # Run application using Maven
-./mvnw spring-boot:run
+$ ./mvnw spring-boot:run
+
+# Run application with the "local" profile (enables Swagger UI)
+$ ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
-* Application: http://localhost:8080
+All REST endpoints are exposed under the `/api` base path.
+
+* REST API: http://localhost:8080/api (e.g. http://localhost:8080/api/posts)
 * Swagger UI: http://localhost:8080/swagger-ui/index.html
+
+> **Note**: Swagger UI is disabled by default (`springdoc.swagger-ui.enabled=false`).
+> It is only available when running with the `local` profile,
+> which enables it via `application-local.properties`.
 
 ## Generating certs
 
