@@ -19,6 +19,8 @@ interface PostRepository extends JpaRepository<Post, Long> {
     """)
     Optional<PostDto> findBySlug(@Param("slug") String slug);
 
+    Optional<Post> findEntityBySlug(String slug);
+
     @Query("""
         select new com.sivalabs.blog.posts.domain.models.PostDto(p.id, p.title, p.slug, p.content, p.createdBy, u.name, p.createdAt, p.updatedAt)
         from Post p join User u on p.createdBy = u.id

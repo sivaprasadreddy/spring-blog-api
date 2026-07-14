@@ -3,14 +3,11 @@ package com.sivalabs.blog.posts.api;
 import com.sivalabs.blog.auth.AuthUtils;
 import com.sivalabs.blog.posts.domain.PostService;
 import com.sivalabs.blog.posts.domain.models.*;
-import com.sivalabs.blog.shared.exceptions.BadRequestException;
 import com.sivalabs.blog.shared.exceptions.ResourceNotFoundException;
 import com.sivalabs.blog.shared.models.PagedResult;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.Objects;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -70,21 +67,15 @@ class PostController {
     @SecurityRequirement(name = "Bearer")
     ResponseEntity<Void> updatePost(@PathVariable String slug, @Valid @RequestBody PostPayload postPayload) {
         LOG.info("Updating post with slug: '{}'", slug);
-        PostDto postDto = postService
-                .findPostBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Post with slug '" + slug + "' not found"));
-        var updatedSlug = postPayload.slug();
-        Optional<PostDto> postBySlug = postService.findPostBySlug(updatedSlug);
-        if (postBySlug.isPresent() && !Objects.equals(postBySlug.get().id(), postDto.id())) {
-            throw new BadRequestException("Post with slug '" + updatedSlug + "' already exists");
-        }
         var loginUserId = AuthUtils.getCurrentUserIdOrThrow();
-        var cmd = new UpdatePostCmd(postDto.id(), postPayload.title(), updatedSlug, postPayload.content(), loginUserId);
+
+        var cmd = new UpdatePostCmd(slug, postPayload.title(), postPayload.slug(), postPayload.content(), loginUserId);
         this.postService.updatePost(cmd);
+
         var location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .replacePath(null)
                 .path("/api/posts/{slug}")
-                .buildAndExpand(updatedSlug)
+                .buildAndExpand(postPayload.slug())
                 .toUri();
         return ResponseEntity.status(HttpStatus.OK).location(location).build();
     }

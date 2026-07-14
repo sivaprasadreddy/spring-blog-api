@@ -119,7 +119,7 @@ class PostControllerTests extends AbstractIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body("""
                         {
-                          "name": "Siva",
+                            "name": "Siva",
                             "email": "siva@gmail.com",
                             "content": "Test comment"
                         }
@@ -282,7 +282,7 @@ class PostControllerTests extends AbstractIT {
               "content":"Installing LinuxMint 22"
             }
             """;
-        UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
+        UserDto userDto = new UserDto(1L, "Administrator", "admin@gmail.com", "", Role.ROLE_ADMIN);
         String token = this.createToken(userDto);
 
         restTestClient
@@ -294,6 +294,57 @@ class PostControllerTests extends AbstractIT {
                 .exchange()
                 .expectStatus()
                 .isOk();
+    }
+
+    @Test
+    void shouldUpdatePostKeepingSameSlug() {
+        var payload = """
+            {
+              "title":"Installing LinuxMint OS",
+              "slug":"installing-linuxmint",
+              "content":"Installing LinuxMint 22"
+            }
+            """;
+        UserDto userDto = new UserDto(1L, "Administrator", "admin@gmail.com", "", Role.ROLE_ADMIN);
+        String token = this.createToken(userDto);
+
+        restTestClient
+                .put()
+                .uri("/api/posts/{slug}", "installing-linuxmint")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body(payload)
+                .exchange()
+                .expectStatus()
+                .isOk();
+    }
+
+    @Test
+    void shouldReturnForbiddenWhenUpdatingPostOwnedByAnotherUser() {
+        var payload = """
+            {
+              "title":"Installing LinuxMint OS",
+              "slug":"installing-linuxmint-os",
+              "content":"Installing LinuxMint 22"
+            }
+            """;
+        UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
+        String token = this.createToken(userDto);
+
+        String response = restTestClient
+                .put()
+                .uri("/api/posts/{slug}", "installing-linuxmint")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body(payload)
+                .exchange()
+                .expectStatus()
+                .isForbidden()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Access Denied");
+        assertThat(response).contains("Only the post owner can modify the post");
     }
 
     @Test
@@ -383,7 +434,7 @@ class PostControllerTests extends AbstractIT {
               "content":"Installing LinuxMint 22"
             }
             """;
-        UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
+        UserDto userDto = new UserDto(1L, "Administrator", "admin@gmail.com", "", Role.ROLE_ADMIN);
         String token = this.createToken(userDto);
 
         String response = restTestClient
@@ -399,6 +450,6 @@ class PostControllerTests extends AbstractIT {
                 .getResponseBody();
 
         assertThat(response).contains("Bad Request");
-        assertThat(response).contains("Post with slug 'introducing-springboot' already exists");
+        assertThat(response).contains("Post with slug introducing-springboot already exists");
     }
 }
