@@ -1,10 +1,10 @@
 package com.sivalabs.blog.posts.api;
 
-import com.sivalabs.blog.auth.AuthUtils;
 import com.sivalabs.blog.posts.domain.PostService;
 import com.sivalabs.blog.posts.domain.models.*;
 import com.sivalabs.blog.shared.exceptions.ResourceNotFoundException;
 import com.sivalabs.blog.shared.models.PagedResult;
+import com.sivalabs.blog.shared.utils.AuthUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -50,10 +50,9 @@ class PostController {
     @PostMapping(value = "/posts", consumes = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Bearer")
     ResponseEntity<Void> createPost(@Valid @RequestBody PostPayload postPayload) {
-        var loginUserId = AuthUtils.getCurrentUserIdOrThrow();
         var slug = postPayload.slug();
         LOG.info("Creating a new post with slug: '{}'", slug);
-        var cmd = new CreatePostCmd(postPayload.title(), slug, postPayload.content(), loginUserId);
+        var cmd = new CreatePostCmd(postPayload.title(), slug, postPayload.content());
         this.postService.createPost(cmd);
         var location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .replacePath(null)

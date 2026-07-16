@@ -23,6 +23,7 @@ create table posts
     slug       varchar(300) not null,
     content    text         not null,
     created_by bigint       not null references users (id),
+    updated_by bigint references users (id),
     created_at timestamp    not null,
     updated_at timestamp,
     version    bigint       not null default 0,

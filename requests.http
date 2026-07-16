@@ -33,3 +33,14 @@ Authorization: Bearer {{auth_token}}
   "slug": "agentic-workflow-using-junie",
   "content": "Agentic Workflow using IntelliJ IDEA and Junie is Cool"
 }
+
+### Update Post
+PUT http://localhost:8080/api/posts/agentic-workflow-using-junie
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "title": "Agentic Workflow using Junie1",
+  "slug": "agentic-workflow-using-junie1",
+  "content": "Agentic Workflow using IntelliJ IDEA and Junie is Cool"
+}

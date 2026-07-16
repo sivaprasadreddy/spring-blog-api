@@ -71,13 +71,11 @@ public class PostService {
         if (postRepository.existsBySlug(cmd.slug())) {
             throw new BadRequestException("Post with slug %s already exists".formatted(cmd.slug()));
         }
-        var user = usersAPI.findById(cmd.createdBy()).orElseThrow();
 
         var entity = new Post();
         entity.setTitle(cmd.title());
         entity.setSlug(cmd.slug());
         entity.setContent(cmd.content());
-        entity.setCreatedBy(user.id());
         postRepository.save(entity);
 
         var event = new PostPublishedEvent(entity.getTitle(), entity.getSlug(), entity.getContent());
