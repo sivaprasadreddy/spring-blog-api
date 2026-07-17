@@ -362,6 +362,42 @@ class PostControllerTests extends AbstractIT {
     }
 
     @Test
+    void shouldUpdatePostWithDefaultCategoryWhenCategorySlugIsNotProvided() {
+        var payload = """
+            {
+              "title":"Installing LinuxMint OS",
+              "slug":"installing-linuxmint",
+              "content":"Installing LinuxMint 22"
+            }
+            """;
+        UserDto userDto = new UserDto(1L, "Administrator", "admin@gmail.com", "", Role.ROLE_ADMIN);
+        String token = this.createToken(userDto);
+
+        restTestClient
+                .put()
+                .uri("/api/posts/{slug}", "installing-linuxmint")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body(payload)
+                .exchange()
+                .expectStatus()
+                .isOk();
+
+        PostDto postDto = restTestClient
+                .get()
+                .uri("/api/posts/{slug}", "installing-linuxmint")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .returnResult(PostDto.class)
+                .getResponseBody();
+
+        assertThat(postDto).isNotNull();
+        assertThat(postDto.categorySlug()).isEqualTo("general");
+        assertThat(postDto.categoryName()).isEqualTo("General");
+    }
+
+    @Test
     void shouldReturnForbiddenWhenUpdatingPostOwnedByAnotherUser() {
         var payload = """
             {

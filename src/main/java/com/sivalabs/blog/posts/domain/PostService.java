@@ -7,7 +7,6 @@ import com.sivalabs.blog.posts.domain.models.*;
 import com.sivalabs.blog.shared.exceptions.BadRequestException;
 import com.sivalabs.blog.shared.exceptions.ResourceNotFoundException;
 import com.sivalabs.blog.shared.models.PagedResult;
-import com.sivalabs.blog.users.UsersAPI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +25,6 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final UsersAPI usersAPI;
     private final CategoriesAPI categoriesAPI;
     private final PostMapper postMapper;
     private final ApplicationEventPublisher eventPublisher;
@@ -35,14 +33,12 @@ public class PostService {
     PostService(
             PostRepository postRepository,
             CommentRepository commentRepository,
-            UsersAPI usersAPI,
             CategoriesAPI categoriesAPI,
             PostMapper postMapper,
             ApplicationEventPublisher eventPublisher,
             ApplicationProperties properties) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
-        this.usersAPI = usersAPI;
         this.categoriesAPI = categoriesAPI;
         this.postMapper = postMapper;
         this.eventPublisher = eventPublisher;
@@ -79,10 +75,7 @@ public class PostService {
             throw new BadRequestException("Post with slug %s already exists".formatted(cmd.slug()));
         }
 
-        var categorySlug = (cmd.categorySlug() == null || cmd.categorySlug().isBlank())
-                ? DEFAULT_CATEGORY_SLUG
-                : cmd.categorySlug();
-        var category = getCategoryBySlug(categorySlug);
+        var category = getCategoryBySlug(cmd.categorySlug());
 
         var entity = new Post();
         entity.setTitle(cmd.title());
@@ -119,9 +112,10 @@ public class PostService {
     }
 
     private CategoryDto getCategoryBySlug(String categorySlug) {
+        var slug = (categorySlug == null || categorySlug.isBlank()) ? DEFAULT_CATEGORY_SLUG : categorySlug;
         return categoriesAPI
-                .findBySlug(categorySlug)
-                .orElseThrow(() -> new BadRequestException("Category with slug %s not found".formatted(categorySlug)));
+                .findBySlug(slug)
+                .orElseThrow(() -> new BadRequestException("Category with slug %s not found".formatted(slug)));
     }
 
     @Transactional(readOnly = true)
