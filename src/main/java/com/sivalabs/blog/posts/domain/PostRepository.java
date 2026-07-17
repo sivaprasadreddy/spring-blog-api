@@ -13,8 +13,8 @@ import org.springframework.data.repository.query.Param;
 interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("""
-        select new com.sivalabs.blog.posts.domain.models.PostDto(p.id, p.title, p.slug, p.content, p.createdBy, u.name, p.createdAt, p.updatedAt)
-        from Post p join User u on p.createdBy = u.id
+        select new com.sivalabs.blog.posts.domain.models.PostDto(p.id, p.title, p.slug, p.content, c.slug, c.name, p.createdBy, u.name, p.createdAt, p.updatedAt)
+        from Post p join User u on p.createdBy = u.id join Category c on p.categoryId = c.id
         where p.slug = :slug
     """)
     Optional<PostDto> findBySlug(@Param("slug") String slug);
@@ -22,21 +22,21 @@ interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findEntityBySlug(String slug);
 
     @Query("""
-        select new com.sivalabs.blog.posts.domain.models.PostDto(p.id, p.title, p.slug, p.content, p.createdBy, u.name, p.createdAt, p.updatedAt)
-        from Post p join User u on p.createdBy = u.id
+        select new com.sivalabs.blog.posts.domain.models.PostDto(p.id, p.title, p.slug, p.content, c.slug, c.name, p.createdBy, u.name, p.createdAt, p.updatedAt)
+        from Post p join User u on p.createdBy = u.id join Category c on p.categoryId = c.id
     """)
     Page<PostDto> findPosts(Pageable pageable);
 
     @Query("""
-        select new com.sivalabs.blog.posts.domain.models.PostDto(p.id, p.title, p.slug, p.content, p.createdBy, u.name, p.createdAt, p.updatedAt)
-        from Post p join User u on p.createdBy = u.id
+        select new com.sivalabs.blog.posts.domain.models.PostDto(p.id, p.title, p.slug, p.content, c.slug, c.name, p.createdBy, u.name, p.createdAt, p.updatedAt)
+        from Post p join User u on p.createdBy = u.id join Category c on p.categoryId = c.id
         where lower(p.title) like :query or lower(p.content) like :query
     """)
     Page<PostDto> searchPosts(@Param("query") String query, Pageable pageable);
 
     @Query("""
-        select new com.sivalabs.blog.posts.domain.models.PostDto(p.id, p.title, p.slug, p.content, p.createdBy, u.name, p.createdAt, p.updatedAt)
-        from Post p join User u on p.createdBy = u.id
+        select new com.sivalabs.blog.posts.domain.models.PostDto(p.id, p.title, p.slug, p.content, c.slug, c.name, p.createdBy, u.name, p.createdAt, p.updatedAt)
+        from Post p join User u on p.createdBy = u.id join Category c on p.categoryId = c.id
         where p.createdAt >= :start and p.createdAt <= :end
     """)
     List<PostDto> findByCreatedDate(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);

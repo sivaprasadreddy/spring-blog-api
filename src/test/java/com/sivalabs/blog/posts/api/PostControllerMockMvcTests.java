@@ -114,7 +114,8 @@ class PostControllerMockMvcTests extends AbstractIT {
                         {
                           "title":"Post Title",
                           "slug":"post-slug",
-                          "content":"Post content"
+                          "content":"Post content",
+                          "categorySlug":"spring"
                         }
                         """)
                 .exchange()
@@ -130,7 +131,8 @@ class PostControllerMockMvcTests extends AbstractIT {
             {
               "title":"Installing LinuxMint OS",
               "slug":"installing-linuxmint-os",
-              "content":"Installing LinuxMint 22"
+              "content":"Installing LinuxMint 22",
+              "categorySlug":"spring"
             }
             """;
         UserDto userDto = new UserDto(1L, "Administrator", "admin@gmail.com", "", Role.ROLE_ADMIN);

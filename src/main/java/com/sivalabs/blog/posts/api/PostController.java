@@ -72,7 +72,7 @@ class PostController {
     ResponseEntity<Void> createPost(@Valid @RequestBody PostPayload postPayload) {
         var slug = postPayload.slug();
         LOG.info("Creating a new post with slug: '{}'", slug);
-        var cmd = new CreatePostCmd(postPayload.title(), slug, postPayload.content());
+        var cmd = new CreatePostCmd(postPayload.title(), slug, postPayload.content(), postPayload.categorySlug());
         this.postService.createPost(cmd);
         var location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .replacePath(null)
@@ -98,7 +98,13 @@ class PostController {
         LOG.info("Updating post with slug: '{}'", slug);
         var loginUserId = AuthUtils.getCurrentUserIdOrThrow();
 
-        var cmd = new UpdatePostCmd(slug, postPayload.title(), postPayload.slug(), postPayload.content(), loginUserId);
+        var cmd = new UpdatePostCmd(
+                slug,
+                postPayload.title(),
+                postPayload.slug(),
+                postPayload.content(),
+                postPayload.categorySlug(),
+                loginUserId);
         this.postService.updatePost(cmd);
 
         var location = ServletUriComponentsBuilder.fromCurrentRequest()

@@ -64,6 +64,8 @@ class PostControllerTests extends AbstractIT {
         assertThat(postDto.id()).isEqualTo(2);
         assertThat(postDto.title()).isEqualTo("SpringBoot: Introducing SpringBoot");
         assertThat(postDto.slug()).isEqualTo("introducing-springboot");
+        assertThat(postDto.categorySlug()).isEqualTo("spring");
+        assertThat(postDto.categoryName()).isEqualTo("Spring");
     }
 
     @Test
@@ -191,7 +193,8 @@ class PostControllerTests extends AbstractIT {
                         {
                           "title":"Post Title",
                           "slug":"post-slug",
-                          "content":"Post content"
+                          "content":"Post content",
+                          "categorySlug":"spring"
                         }
                         """)
                 .exchange()
@@ -209,7 +212,8 @@ class PostControllerTests extends AbstractIT {
                         {
                           "title":"Post Title",
                           "slug":"post-slug",
-                          "content":"Post content"
+                          "content":"Post content",
+                          "categorySlug":"spring"
                         }
                         """)
                 .exchange()
@@ -260,7 +264,8 @@ class PostControllerTests extends AbstractIT {
                         {
                           "title":"Duplicate Slug Post",
                           "slug":"introducing-springboot",
-                          "content":"Post content"
+                          "content":"Post content",
+                          "categorySlug":"spring"
                         }
                         """)
                 .exchange()
@@ -279,7 +284,8 @@ class PostControllerTests extends AbstractIT {
             {
               "title":"Installing LinuxMint OS",
               "slug":"installing-linuxmint-os",
-              "content":"Installing LinuxMint 22"
+              "content":"Installing LinuxMint 22",
+              "categorySlug":"spring"
             }
             """;
         UserDto userDto = new UserDto(1L, "Administrator", "admin@gmail.com", "", Role.ROLE_ADMIN);
@@ -302,7 +308,8 @@ class PostControllerTests extends AbstractIT {
             {
               "title":"Installing LinuxMint OS",
               "slug":"installing-linuxmint",
-              "content":"Installing LinuxMint 22"
+              "content":"Installing LinuxMint 22",
+              "categorySlug":"spring"
             }
             """;
         UserDto userDto = new UserDto(1L, "Administrator", "admin@gmail.com", "", Role.ROLE_ADMIN);
@@ -325,7 +332,8 @@ class PostControllerTests extends AbstractIT {
             {
               "title":"Installing LinuxMint OS",
               "slug":"installing-linuxmint-os",
-              "content":"Installing LinuxMint 22"
+              "content":"Installing LinuxMint 22",
+              "categorySlug":"spring"
             }
             """;
         UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
@@ -353,7 +361,8 @@ class PostControllerTests extends AbstractIT {
             {
               "title":"Installing LinuxMint OS",
               "slug":"installing-linuxmint-os",
-              "content":"Installing LinuxMint 22"
+              "content":"Installing LinuxMint 22",
+              "categorySlug":"spring"
             }
             """;
 
@@ -373,7 +382,8 @@ class PostControllerTests extends AbstractIT {
             {
               "title":"Unknown Post",
               "slug":"unknown-post",
-              "content":"Updated content"
+              "content":"Updated content",
+              "categorySlug":"spring"
             }
             """;
         UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
@@ -431,7 +441,8 @@ class PostControllerTests extends AbstractIT {
             {
               "title":"Installing LinuxMint OS",
               "slug":"introducing-springboot",
-              "content":"Installing LinuxMint 22"
+              "content":"Installing LinuxMint 22",
+              "categorySlug":"spring"
             }
             """;
         UserDto userDto = new UserDto(1L, "Administrator", "admin@gmail.com", "", Role.ROLE_ADMIN);

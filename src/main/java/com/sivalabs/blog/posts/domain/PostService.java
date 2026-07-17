@@ -1,6 +1,8 @@
 package com.sivalabs.blog.posts.domain;
 
 import com.sivalabs.blog.ApplicationProperties;
+import com.sivalabs.blog.categories.CategoriesAPI;
+import com.sivalabs.blog.categories.domain.models.CategoryDto;
 import com.sivalabs.blog.posts.domain.models.*;
 import com.sivalabs.blog.shared.exceptions.BadRequestException;
 import com.sivalabs.blog.shared.exceptions.ResourceNotFoundException;
@@ -23,6 +25,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UsersAPI usersAPI;
+    private final CategoriesAPI categoriesAPI;
     private final PostMapper postMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final ApplicationProperties properties;
@@ -31,12 +34,14 @@ public class PostService {
             PostRepository postRepository,
             CommentRepository commentRepository,
             UsersAPI usersAPI,
+            CategoriesAPI categoriesAPI,
             PostMapper postMapper,
             ApplicationEventPublisher eventPublisher,
             ApplicationProperties properties) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.usersAPI = usersAPI;
+        this.categoriesAPI = categoriesAPI;
         this.postMapper = postMapper;
         this.eventPublisher = eventPublisher;
         this.properties = properties;
@@ -72,10 +77,13 @@ public class PostService {
             throw new BadRequestException("Post with slug %s already exists".formatted(cmd.slug()));
         }
 
+        var category = getCategoryBySlug(cmd.categorySlug());
+
         var entity = new Post();
         entity.setTitle(cmd.title());
         entity.setSlug(cmd.slug());
         entity.setContent(cmd.content());
+        entity.setCategoryId(category.id());
         postRepository.save(entity);
 
         var event = new PostPublishedEvent(entity.getTitle(), entity.getSlug(), entity.getContent());
@@ -96,10 +104,19 @@ public class PostService {
             throw new BadRequestException("Post with slug %s already exists".formatted(cmd.newSlug()));
         }
 
+        var category = getCategoryBySlug(cmd.categorySlug());
+
         entity.setTitle(cmd.newTitle());
         entity.setSlug(cmd.newSlug());
         entity.setContent(cmd.newContent());
+        entity.setCategoryId(category.id());
         postRepository.save(entity);
+    }
+
+    private CategoryDto getCategoryBySlug(String categorySlug) {
+        return categoriesAPI
+                .findBySlug(categorySlug)
+                .orElseThrow(() -> new BadRequestException("Category with slug %s not found".formatted(categorySlug)));
     }
 
     @Transactional(readOnly = true)
