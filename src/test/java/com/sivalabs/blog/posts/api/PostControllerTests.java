@@ -203,6 +203,41 @@ class PostControllerTests extends AbstractIT {
     }
 
     @Test
+    void shouldCreatePostWithDefaultCategoryWhenCategorySlugIsNotProvided() {
+        UserDto userDto = new UserDto(2L, "Siva", "siva@gmail.com", "", Role.ROLE_USER);
+        String token = this.createToken(userDto);
+
+        restTestClient
+                .post()
+                .uri("/api/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .body("""
+                        {
+                          "title":"Post Without Category",
+                          "slug":"post-without-category",
+                          "content":"Post content"
+                        }
+                        """)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+
+        PostDto postDto = restTestClient
+                .get()
+                .uri("/api/posts/{slug}", "post-without-category")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .returnResult(PostDto.class)
+                .getResponseBody();
+
+        assertThat(postDto).isNotNull();
+        assertThat(postDto.categorySlug()).isEqualTo("general");
+        assertThat(postDto.categoryName()).isEqualTo("General");
+    }
+
+    @Test
     void shouldReturnUnauthorizedWhenCreatingPostWithoutToken() {
         restTestClient
                 .post()

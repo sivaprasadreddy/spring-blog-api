@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostService {
+    private static final String DEFAULT_CATEGORY_SLUG = "general";
+
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UsersAPI usersAPI;
@@ -77,7 +79,10 @@ public class PostService {
             throw new BadRequestException("Post with slug %s already exists".formatted(cmd.slug()));
         }
 
-        var category = getCategoryBySlug(cmd.categorySlug());
+        var categorySlug = (cmd.categorySlug() == null || cmd.categorySlug().isBlank())
+                ? DEFAULT_CATEGORY_SLUG
+                : cmd.categorySlug();
+        var category = getCategoryBySlug(categorySlug);
 
         var entity = new Post();
         entity.setTitle(cmd.title());

@@ -14,7 +14,7 @@ Protected endpoints require a Bearer token in the `Authorization` header:
 Authorization: Bearer <token>
 ```
 
-Obtain a token via the [Login](#post-apilogin) endpoint.
+Get a token via the [Login](#post-apilogin) endpoint.
 
 ---
 
@@ -93,6 +93,140 @@ Register a new user account.
 
 ---
 
+## Categories API
+
+### GET /api/categories
+
+Retrieve the list of all categories.
+
+**Responses**
+
+`200 OK`
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Java",
+    "slug": "java",
+    "createdAt": "2026-01-01T10:00:00",
+    "updatedAt": "2026-01-02T12:00:00"
+  }
+]
+```
+
+---
+
+### GET /api/categories/{slug}
+
+Retrieve a single category by its slug.
+
+**Path Parameters**
+
+| Parameter | Type   | Description       |
+|-----------|--------|-------------------|
+| `slug`    | string | The category slug |
+
+**Responses**
+
+`200 OK` — Returns a [CategoryDto](#categorydto).
+
+`404 Not Found` — Category with the given slug does not exist.
+
+---
+
+### POST /api/categories
+
+Create a new category.
+
+**Authentication:** Required (Bearer token)
+
+**Request Body**
+
+```json
+{
+  "name": "Java",
+  "slug": "java"
+}
+```
+
+| Field  | Type   | Required | Constraints |
+|--------|--------|----------|-------------|
+| `name` | string | yes      | Non-blank   |
+| `slug` | string | yes      | Non-blank   |
+
+**Responses**
+
+`201 Created` — Returns the created [CategoryDto](#categorydto); `Location` header contains the URI of the new category (`/api/categories/{slug}`).
+
+`400 Bad Request` — Invalid payload or a category with the given slug already exists.
+
+`401 Unauthorized` — Missing or invalid Bearer token.
+
+---
+
+### PUT /api/categories/{slug}
+
+Update an existing category.
+
+**Authentication:** Required (Bearer token)
+
+**Path Parameters**
+
+| Parameter | Type   | Description                    |
+|-----------|--------|--------------------------------|
+| `slug`    | string | Slug of the category to update |
+
+**Request Body**
+
+```json
+{
+  "name": "Java",
+  "slug": "java"
+}
+```
+
+| Field  | Type   | Required | Constraints                                        |
+|--------|--------|----------|----------------------------------------------------|
+| `name` | string | yes      | Non-blank                                          |
+| `slug` | string | yes      | Non-blank; must not conflict with another category |
+
+**Responses**
+
+`200 OK` — Returns the updated [CategoryDto](#categorydto).
+
+`400 Bad Request` — Invalid payload or the new slug is already used by a different category.
+
+`401 Unauthorized` — Missing or invalid Bearer token.
+
+`404 Not Found` — Category with the given slug does not exist.
+
+---
+
+### DELETE /api/categories/{slug}
+
+Delete a category.
+
+**Authentication:** Required (Bearer token)
+
+**Path Parameters**
+
+| Parameter | Type   | Description                    |
+|-----------|--------|--------------------------------|
+| `slug`    | string | Slug of the category to delete |
+
+**Responses**
+
+`204 No Content` — Category deleted successfully.
+
+`400 Bad Request` — Category cannot be deleted because it is associated with one or more posts.
+
+`401 Unauthorized` — Missing or invalid Bearer token.
+
+`404 Not Found` — Category with the given slug does not exist.
+
+---
+
 ## Posts API
 
 ### GET /api/posts
@@ -118,6 +252,8 @@ Retrieve a paginated list of posts. Optionally filter by a search query.
       "title": "My First Post",
       "slug": "my-first-post",
       "content": "Hello world...",
+      "categorySlug": "java",
+      "categoryName": "Java",
       "authorId": 1,
       "authorName": "John Doe",
       "createdAt": "2026-01-01T10:00:00",
@@ -164,15 +300,17 @@ Create a new post.
 {
   "title": "My New Post",
   "slug": "my-new-post",
-  "content": "Post content goes here..."
+  "content": "Post content goes here...",
+  "categorySlug": "java"
 }
 ```
 
-| Field     | Type   | Required | Constraints |
-|-----------|--------|----------|-------------|
-| `title`   | string | yes      | Non-empty   |
-| `slug`    | string | yes      | Non-empty   |
-| `content` | string | yes      | Non-empty   |
+| Field          | Type   | Required | Constraints                         |
+|----------------|--------|----------|-------------------------------------|
+| `title`        | string | yes      | Non-blank                           |
+| `slug`         | string | yes      | Non-blank                           |
+| `content`      | string | yes      | Non-blank                           |
+| `categorySlug` | string | no       | Slug of an existing category        |
 
 **Responses**
 
@@ -200,15 +338,17 @@ Update an existing post.
 {
   "title": "Updated Title",
   "slug": "updated-slug",
-  "content": "Updated content..."
+  "content": "Updated content...",
+  "categorySlug": "java"
 }
 ```
 
-| Field     | Type   | Required | Constraints                                    |
-|-----------|--------|----------|------------------------------------------------|
-| `title`   | string | yes      | Non-empty                                      |
-| `slug`    | string | yes      | Non-empty; must not conflict with another post |
-| `content` | string | yes      | Non-empty                                      |
+| Field          | Type   | Required | Constraints                                    |
+|----------------|--------|----------|------------------------------------------------|
+| `title`        | string | yes      | Non-blank                                      |
+| `slug`         | string | yes      | Non-blank; must not conflict with another post |
+| `content`      | string | yes      | Non-blank                                      |
+| `categorySlug` | string | no       | Slug of an existing category                   |
 
 **Responses**
 
@@ -291,16 +431,28 @@ Add a comment to a post.
 
 ### PostDto
 
-| Field        | Type            | Description                  |
-|--------------|-----------------|------------------------------|
-| `id`         | long            | Post identifier              |
-| `title`      | string          | Post title                   |
-| `slug`       | string          | URL-friendly identifier      |
-| `content`    | string          | Post body                    |
-| `authorId`   | long            | ID of the author             |
-| `authorName` | string          | Display name of the author   |
-| `createdAt`  | datetime        | Creation timestamp           |
-| `updatedAt`  | datetime        | Last update timestamp        |
+| Field          | Type     | Description                                |
+|----------------|----------|--------------------------------------------|
+| `id`           | long     | Post identifier                            |
+| `title`        | string   | Post title                                 |
+| `slug`         | string   | URL-friendly identifier                    |
+| `content`      | string   | Post body                                  |
+| `categorySlug` | string   | Slug of the associated category (nullable) |
+| `categoryName` | string   | Name of the associated category (nullable) |
+| `authorId`     | long     | ID of the author                           |
+| `authorName`   | string   | Display name of the author                 |
+| `createdAt`    | datetime | Creation timestamp                         |
+| `updatedAt`    | datetime | Last update timestamp                      |
+
+### CategoryDto
+
+| Field       | Type     | Description             |
+|-------------|----------|-------------------------|
+| `id`        | long     | Category identifier     |
+| `name`      | string   | Category name           |
+| `slug`      | string   | URL-friendly identifier |
+| `createdAt` | datetime | Creation timestamp      |
+| `updatedAt` | datetime | Last update timestamp   |
 
 ### CommentDto
 
