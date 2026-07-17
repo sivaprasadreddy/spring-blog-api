@@ -115,7 +115,7 @@ public record ApplicationProperties(
         @Valid CorsProperties cors) {
 
     public record JwtProperties(
-            @NotEmpty String issuer,
+            @NotBlank String issuer,
             @NotNull Long expiresInSeconds,
             @NotNull RSAPublicKey publicKey,
             @NotNull RSAPrivateKey privateKey) {}
@@ -154,7 +154,7 @@ public class OrderService {
 ```
 
 **Rules:**
-- Use `@Validated` + Jakarta Validation constraints (`@NotEmpty`, `@NotNull`) on the record to fail fast at startup when required properties are missing.
+- Use `@Validated` + Jakarta Validation constraints (`@NotBlank`, `@NotNull`) on the record to fail fast at startup when required properties are missing.
 - Use `@DefaultValue` for optional properties with sensible defaults.
 - Use nested records to group related properties (jwt, cors, mail, etc.).
 - Never use `@Value` for application-specific settings — use `@ConfigurationProperties` records. Reserve `@Value` only for simple Spring/infrastructure property references where a full record would be overkill.

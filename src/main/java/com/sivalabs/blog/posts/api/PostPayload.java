@@ -1,8 +1,9 @@
 package com.sivalabs.blog.posts.api;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 
 record PostPayload(
-        @NotEmpty(message = "Title is required") String title,
-        @NotEmpty(message = "Slug is required") String slug,
-        @NotEmpty(message = "Content is required") String content) {}
+        @NotBlank(message = "Title is required") String title,
+        @NotBlank(message = "Slug is required") String slug,
+        @NotBlank(message = "Content is required") String content,
+        String categorySlug) {}

@@ -38,6 +38,8 @@ class WebSecurityConfig {
                 .permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/posts/*/comments")
                 .permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/categories", "/api/categories/**")
+                .permitAll()
                 .anyRequest()
                 .authenticated());
 

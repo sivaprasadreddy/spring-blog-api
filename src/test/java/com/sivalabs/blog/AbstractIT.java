@@ -3,6 +3,7 @@ package com.sivalabs.blog;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import com.sivalabs.blog.auth.domain.JwtTokenHelper;
+import com.sivalabs.blog.users.domain.models.Role;
 import com.sivalabs.blog.users.domain.models.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
@@ -30,6 +31,11 @@ public abstract class AbstractIT {
 
     @Autowired
     private JwtTokenHelper jwtTokenHelper;
+
+    public String adminToken() {
+        UserDto userDto = new UserDto(1L, "Administrator", "admin@gmail.com", "", Role.ROLE_ADMIN);
+        return this.createToken(userDto);
+    }
 
     public String createToken(UserDto userDto) {
         return jwtTokenHelper.generateToken(userDto).token();

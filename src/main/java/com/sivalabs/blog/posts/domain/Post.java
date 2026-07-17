@@ -23,6 +23,9 @@ class Post extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "category_id", nullable = false)
+    private Long categoryId;
+
     @Column(name = "created_by", nullable = false)
     @CreatedBy
     private Long createdBy;
@@ -61,6 +64,14 @@ class Post extends BaseEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public Long getCreatedBy() {

@@ -6,6 +6,11 @@ The `spring-blog-api` is a modular Spring Boot REST API for a blog platform.
 ## Features
 - User registration (`POST /api/users`)
 - JWT-based login (`POST /api/login`)
+- List all categories (`GET /api/categories`)
+- Get details of a category by slug (`GET /api/categories/{slug}`)
+- Create a new category (authenticated) (`POST /api/categories`)
+- Update an existing category (authenticated) (`PUT /api/categories/{slug}`)
+- Delete a category (authenticated) (`DELETE /api/categories/{slug}`)
 - List posts with pagination (`GET /api/posts?page=`)
 - Search posts by query (`GET /api/posts?query=`)
 - Get details of a post by slug (`GET /api/posts/{slug}`)
@@ -23,6 +28,7 @@ The `spring-blog-api` is a modular Spring Boot REST API for a blog platform.
   - Can register and login
 - Authenticated user (ROLE_USER):
   - Can create and update posts
+  - Can create, update, and delete categories
 - Admin user (ROLE_ADMIN):
   - Inherits user capabilities through role hierarchy (`ROLE_ADMIN > ROLE_USER`)
 - System scheduler:
