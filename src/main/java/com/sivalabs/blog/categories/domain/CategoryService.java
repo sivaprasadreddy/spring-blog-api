@@ -7,6 +7,7 @@ import com.sivalabs.blog.shared.exceptions.BadRequestException;
 import com.sivalabs.blog.shared.exceptions.ResourceNotFoundException;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +65,11 @@ public class CategoryService {
         var entity = categoryRepository
                 .findEntityBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with slug '" + slug + "' not found"));
-        categoryRepository.delete(entity);
+        try {
+            categoryRepository.delete(entity);
+            categoryRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new BadRequestException("Category cannot be deleted because it is associated with one or more posts");
+        }
     }
 }

@@ -228,4 +228,20 @@ class CategoryControllerTests extends AbstractIT {
                 .expectStatus()
                 .isNotFound();
     }
+
+    @Test
+    void shouldReturnBadRequestWhenDeletingCategoryAssociatedWithPosts() {
+        String response = restTestClient
+                .delete()
+                .uri("/api/categories/{slug}", "spring")
+                .header("Authorization", "Bearer " + adminToken())
+                .exchange()
+                .expectStatus()
+                .isBadRequest()
+                .returnResult(String.class)
+                .getResponseBody();
+
+        assertThat(response).contains("Bad Request");
+        assertThat(response).contains("Category cannot be deleted because it is associated with one or more posts");
+    }
 }
