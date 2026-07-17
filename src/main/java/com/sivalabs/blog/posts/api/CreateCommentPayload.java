@@ -1,11 +1,11 @@
 package com.sivalabs.blog.posts.api;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 
 record CreateCommentPayload(
-        @NotEmpty(message = "Name is required") String name,
+        @NotBlank(message = "Name is required") String name,
 
-        @NotEmpty(message = "Email is required") @Email(message = "Invalid email address") String email,
+        @NotBlank(message = "Email is required") @Email(message = "Invalid email address") String email,
 
-        @NotEmpty(message = "Content is required") String content) {}
+        @NotBlank(message = "Content is required") String content) {}
