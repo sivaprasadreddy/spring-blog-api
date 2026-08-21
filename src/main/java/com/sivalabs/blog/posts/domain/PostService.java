@@ -7,7 +7,7 @@ import com.sivalabs.blog.posts.domain.models.*;
 import com.sivalabs.blog.shared.exceptions.BadRequestException;
 import com.sivalabs.blog.shared.exceptions.ResourceNotFoundException;
 import com.sivalabs.blog.shared.models.PagedResult;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.context.ApplicationEventPublisher;
@@ -60,7 +60,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostDto> findPostsCreatedBetween(LocalDateTime start, LocalDateTime end) {
+    public List<PostDto> findPostsCreatedBetween(Instant start, Instant end) {
         return postRepository.findByCreatedDate(start, end);
     }
 

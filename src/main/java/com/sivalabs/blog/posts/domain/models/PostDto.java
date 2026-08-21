@@ -1,6 +1,6 @@
 package com.sivalabs.blog.posts.domain.models;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public record PostDto(
         Long id,
@@ -11,5 +11,5 @@ public record PostDto(
         String categoryName,
         Long authorId,
         String authorName,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt) {}
+        Instant createdAt,
+        Instant updatedAt) {}

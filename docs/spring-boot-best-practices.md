@@ -332,10 +332,10 @@ class Order extends BaseEntity {
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
     @CreatedDate
-    protected LocalDateTime createdAt;
+    protected Instant createdAt;
 
     @LastModifiedDate
-    protected LocalDateTime updatedAt;
+    protected Instant updatedAt;
 
     @Version
     protected Long version;
@@ -361,8 +361,8 @@ public record OrderDto(
         String status,
         Long customerId,
         String customerName,   // denormalized — avoids an extra query at the call site
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt) {}
+        Instant createdAt,
+        Instant updatedAt) {}
 ```
 
 **Rules:**

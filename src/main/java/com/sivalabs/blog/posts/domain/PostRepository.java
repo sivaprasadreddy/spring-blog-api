@@ -1,7 +1,7 @@
 package com.sivalabs.blog.posts.domain;
 
 import com.sivalabs.blog.posts.domain.models.PostDto;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -39,7 +39,7 @@ interface PostRepository extends JpaRepository<Post, Long> {
         from Post p join User u on p.createdBy = u.id join Category c on p.categoryId = c.id
         where p.createdAt >= :start and p.createdAt <= :end
     """)
-    List<PostDto> findByCreatedDate(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+    List<PostDto> findByCreatedDate(@Param("start") Instant start, @Param("end") Instant end);
 
     boolean existsBySlug(String slug);
 }

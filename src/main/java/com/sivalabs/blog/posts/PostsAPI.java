@@ -2,7 +2,7 @@ package com.sivalabs.blog.posts;
 
 import com.sivalabs.blog.posts.domain.PostService;
 import com.sivalabs.blog.posts.domain.models.PostDto;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ public class PostsAPI {
         this.postService = postService;
     }
 
-    public List<PostDto> findPostsCreatedBetween(LocalDateTime start, LocalDateTime end) {
+    public List<PostDto> findPostsCreatedBetween(Instant start, Instant end) {
         return postService.findPostsCreatedBetween(start, end);
     }
 }

@@ -5,10 +5,7 @@ import com.sivalabs.blog.posts.PostsAPI;
 import com.sivalabs.blog.posts.domain.models.PostDto;
 import com.sivalabs.blog.users.UsersAPI;
 import com.sivalabs.blog.users.domain.models.UserDto;
-import java.time.DayOfWeek;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +28,9 @@ class WeeklyEmailSenderJob {
     @Scheduled(cron = "${blog.newsletter-job-cron}")
     void sendNewsLetter() {
         LOG.info("Sending newsletter at {}", Instant.now());
-        LocalDateTime end = LocalDateTime.now();
-        LocalDateTime startOfWeek = LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay();
+        Instant end = Instant.now();
+        Instant startOfWeek =
+                LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay().toInstant(ZoneOffset.UTC);
         List<PostDto> posts = postsAPI.findPostsCreatedBetween(startOfWeek, end);
         if (posts.isEmpty()) {
             LOG.info("No posts found for this week. Skipping newsletter");

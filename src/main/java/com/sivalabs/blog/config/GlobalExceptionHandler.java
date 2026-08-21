@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.*;
 import com.sivalabs.blog.shared.exceptions.BadRequestException;
 import com.sivalabs.blog.shared.exceptions.ResourceNotFoundException;
 import java.util.List;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -35,7 +36,10 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+            @NonNull MethodArgumentNotValidException ex,
+            @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status,
+            @NonNull WebRequest request) {
         LOG.error("Validation error", ex);
         var errors = ex.getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
