@@ -18,7 +18,7 @@
 
     <properties>
         <java.version>25</java.version>
-        <spring-modulith.version>2.1.0</spring-modulith.version>
+        <spring-modulith.version>2.1.1</spring-modulith.version>
         <springdoc-openapi.version>3.1.0</springdoc-openapi.version>
         <hypersistence.version>3.15.5</hypersistence.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
