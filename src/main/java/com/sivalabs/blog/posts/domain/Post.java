@@ -30,7 +30,7 @@ class Post extends BaseEntity {
     @CreatedBy
     private Long createdBy;
 
-    @Column(name = "updated_by", nullable = false)
+    @Column(name = "updated_by")
     @LastModifiedBy
     private Long updatedBy;
 
