@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,12 +25,10 @@ public class JavaMailService implements EmailService {
         this.properties = properties;
     }
 
-    @Async
     public void send(String to, String subject, String content) {
         this.send(List.of(to), subject, content);
     }
 
-    @Async
     public void send(List<String> to, String subject, String content) {
         String supportEmail = properties.supportEmail();
         try {
