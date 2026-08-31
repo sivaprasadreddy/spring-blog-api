@@ -20,6 +20,7 @@ services:
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
       EMAIL_HOST: mailpit
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
       AXELIX_SBS_DISCOVERY_SELF_REGISTRATION: true
       AXELIX_SBS_DISCOVERY_INSTANCE_NAME: spring-blog-api
       AXELIX_SBS_DISCOVERY_INSTANCE_ACTUATOR_URL: http://spring-blog-api:8080/actuator
