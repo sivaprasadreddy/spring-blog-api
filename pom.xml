@@ -109,7 +109,7 @@
         </dependency>-->
         <dependency>
             <groupId>com.axelixlabs</groupId>
-            <artifactId>axelix-spring-boot-2-starter</artifactId>
+            <artifactId>axelix-spring-boot-4-starter</artifactId>
             <version>1.0.2</version>
         </dependency>
 
