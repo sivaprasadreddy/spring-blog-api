@@ -28,7 +28,7 @@
         <bootui.version>1.15.0</bootui.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <jacoco.minimum.coverage>75%</jacoco.minimum.coverage>
-        <spotless.version>3.10.1</spotless.version>
+        <spotless.version>3.10.2</spotless.version>
         <palantir-java-format.version>2.96.0</palantir-java-format.version>
         <dockerImageName>sivaprasadreddy/${project.artifactId}</dockerImageName>
     </properties>
