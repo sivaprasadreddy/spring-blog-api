@@ -1,33 +1,51 @@
-version: '3'
+version: "3"
 
 vars:
-  GOOS: "{{default OS .GOOS}}"
-  MVNW: '{{if eq .GOOS "windows"}}mvnw.cmd{{else}}./mvnw{{end}}'
-  SLEEP_CMD: '{{if eq .GOOS "windows"}}timeout{{else}}sleep{{end}}'
-  IMAGE_NAME: 'sivaprasadreddy/spring-blog-api'
-  DC_DIR: "docker"
-  DC_FILE: "{{.DC_DIR}}/docker-compose.yml"
+  DC_FILE: "docker/compose.yml"
+  REGISTRY: "docker.io"
+  IMAGE_NAME: "sivaprasadreddy/spring-blog-api"
+  DOCKER_IMAGE_NAME: "{{.REGISTRY}}/{{.IMAGE_NAME}}"
+  VERSION:
+    sh: "./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout"
 
 tasks:
   default:
     cmds:
       - task: test
 
+  help:
+    cmds:
+      - task --list
+    silent: true
+
   format:
     desc: Formats code
     cmds:
-      - "{{.MVNW}} spotless:apply"
+      - "./mvnw spotless:apply"
 
   test:
     desc: Run all the tests
     deps: [ format ]
     cmds:
-      - "{{.MVNW}} clean verify"
+      - "./mvnw clean test -Dsurefire.skipAfterFailureCount=1"
+
+  verify:
+    desc: Run verification checks
+    cmds:
+      - "./mvnw -ntp verify"
 
   build_image:
     desc: Build Docker Image using Buildpacks
     cmds:
-      - "{{.MVNW}} clean compile spring-boot:build-image -DskipTests"
+      - "./mvnw clean compile spring-boot:build-image -DskipTests -DdockerImageName={{.DOCKER_IMAGE_NAME}}:{{.VERSION}}"
+
+  push_image:
+    desc: Push Docker Image to Registry
+    cmds:
+      - task: build_image
+      - docker tag {{.DOCKER_IMAGE_NAME}}:{{.VERSION}} {{.DOCKER_IMAGE_NAME}}:latest
+      - docker push {{.DOCKER_IMAGE_NAME}}:{{.VERSION}}
+      - docker push {{.DOCKER_IMAGE_NAME}}:latest
 
   start:
     desc: Start the application
@@ -53,4 +71,4 @@ tasks:
     vars:
       DURATION: "{{default 5 .DURATION}}"
     cmds:
-      - "{{.SLEEP_CMD}} {{.DURATION}}"
+      - "sleep {{.DURATION}}"

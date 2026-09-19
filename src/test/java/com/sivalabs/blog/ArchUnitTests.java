@@ -5,9 +5,11 @@ import static com.tngtech.archunit.core.domain.JavaModifier.*;
 import com.enofex.taikai.Taikai;
 import com.enofex.taikai.java.ImportsConfigurer;
 import java.util.List;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
+@Order(1)
 class ArchUnitTests {
     private static final String BASE_PACKAGE = ArchUnitTests.class.getPackageName();
 

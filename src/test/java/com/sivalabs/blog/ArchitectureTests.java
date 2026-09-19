@@ -13,8 +13,10 @@ import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import jakarta.persistence.Entity;
+import org.junit.jupiter.api.Order;
 import org.springframework.stereotype.Service;
 
+@Order(1)
 @AnalyzeClasses(packages = BASE_PACKAGE)
 class ArchitectureTests {
     public static final String BASE_PACKAGE = "com.sivalabs.blog";

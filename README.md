@@ -2,7 +2,7 @@
 
 A REST API for a blog application using SpringBoot.
 
-[![Maven Build](https://github.com/sivaprasadreddy/spring-blog-api/actions/workflows/maven.yml/badge.svg)](https://github.com/sivaprasadreddy/spring-blog-api/actions/workflows/maven.yml)
+[![Maven Build](https://github.com/sivaprasadreddy/spring-blog-api/actions/workflows/ci.yml/badge.svg)](https://github.com/sivaprasadreddy/spring-blog-api/actions/workflows/ci.yml)
 
 > [!NOTE]  
 > You can find the frontend application(s) using this REST API in the following repositories:
