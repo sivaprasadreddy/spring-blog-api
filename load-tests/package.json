@@ -5,6 +5,6 @@
     "test": "k6 run src/posts.js"
   },
   "devDependencies": {
-    "@types/k6": "^2.2.0"
+    "@types/k6": "^2.2.1"
   }
 }
