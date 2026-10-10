@@ -14,6 +14,7 @@ import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import jakarta.persistence.Entity;
 import org.junit.jupiter.api.Order;
+import org.springframework.data.repository.Repository;
 import org.springframework.stereotype.Service;
 
 @Order(1)
@@ -42,7 +43,7 @@ class ArchitectureTests {
     // Repositories must not be accessed from outside their own module
     @ArchTest
     static final ArchRule repositories_are_not_public =
-            noClasses().that().haveNameMatching(".*Repository").should().bePublic();
+            noClasses().that().areAssignableTo(Repository.class).should().bePublic();
 
     // Entities must not be public
     @ArchTest

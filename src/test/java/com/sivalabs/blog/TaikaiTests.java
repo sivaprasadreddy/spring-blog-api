@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
 @Order(1)
-class ArchUnitTests {
-    private static final String BASE_PACKAGE = ArchUnitTests.class.getPackageName();
+class TaikaiTests {
+    private static final String BASE_PACKAGE = TaikaiTests.class.getPackageName();
 
     @Test
     void shouldFulfillConstraints() {
@@ -37,12 +37,13 @@ class ArchUnitTests {
                                 .namesShouldEndWithController()
                                 .shouldNotDependOnOtherControllers()
                                 .shouldBePackagePrivate())
-                        .services(services -> services
-                                // .shouldBeAnnotatedWithService()
+                        .services(services -> services.shouldBeAnnotatedWithService()
                                 .shouldNotDependOnControllers()
                                 .namesShouldEndWithService())
-                        .repositories(repositories ->
-                                repositories.shouldNotDependOnServices().namesShouldEndWithRepository()))
+                        .repositories(repositories -> repositories
+                                .shouldBePackagePrivate()
+                                .shouldNotDependOnServices()
+                                .namesShouldEndWithRepository()))
                 .build()
                 .checkAll();
     }
