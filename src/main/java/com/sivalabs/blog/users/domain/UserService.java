@@ -4,9 +4,9 @@ import com.sivalabs.blog.users.domain.models.CreateUserCmd;
 import com.sivalabs.blog.users.domain.models.UserDto;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -21,7 +21,8 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
+    @Transactional(readOnly = true)
+    @Cacheable("user-by-id")
     public Optional<UserDto> findById(Long id) {
         return userRepository.findById(id).map(userMapper::toUserDto);
     }
@@ -32,6 +33,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable("user-by-email")
     public Optional<UserDto> findByEmail(String email) {
         return userRepository.findByEmailIgnoreCase(email).map(userMapper::toUserDtoWithPassword);
     }

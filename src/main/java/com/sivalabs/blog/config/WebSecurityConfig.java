@@ -32,6 +32,8 @@ class WebSecurityConfig {
                 .permitAll()
                 .requestMatchers("/api/login")
                 .permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/users/*")
+                .permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/users")
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/posts", "/api/posts/**")

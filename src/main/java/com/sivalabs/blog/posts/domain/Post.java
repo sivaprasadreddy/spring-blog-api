@@ -2,6 +2,7 @@ package com.sivalabs.blog.posts.domain;
 
 import com.sivalabs.blog.shared.entities.BaseEntity;
 import jakarta.persistence.*;
+import java.util.Set;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 
@@ -33,6 +34,9 @@ class Post extends BaseEntity {
     @Column(name = "updated_by")
     @LastModifiedBy
     private Long updatedBy;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
+    private Set<Comment> comments;
 
     public Long getId() {
         return id;
@@ -88,5 +92,13 @@ class Post extends BaseEntity {
 
     public void setUpdatedBy(Long updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 }

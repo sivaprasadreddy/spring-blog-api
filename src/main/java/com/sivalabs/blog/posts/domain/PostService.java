@@ -46,6 +46,20 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
+    public PagedResult<PostVO> findPostsWithComments(int pageNo) {
+        Pageable pageable = this.getPageRequest(pageNo);
+        Page<Post> posts = postRepository.findAll(pageable);
+        Page<PostVO> postVOS = posts.map(post -> new PostVO(
+                post.getId(),
+                post.getTitle(),
+                post.getSlug(),
+                post.getContent(),
+                post.getCreatedAt(),
+                post.getComments().stream().map(postMapper::toCommentDto).toList()));
+        return PagedResult.from(postVOS);
+    }
+
+    @Transactional(readOnly = true)
     public PagedResult<PostDto> findPosts(int pageNo) {
         Pageable pageable = this.getPageRequest(pageNo);
         Page<PostDto> posts = postRepository.findPosts(pageable);
