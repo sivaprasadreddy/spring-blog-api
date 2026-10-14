@@ -14,10 +14,6 @@ public class UsersAPI {
         this.userService = userService;
     }
 
-    public Optional<UserDto> findById(Long id) {
-        return userService.findById(id);
-    }
-
     public Optional<UserDto> findByEmailWithPassword(String email) {
         return userService.findByEmail(email);
     }
