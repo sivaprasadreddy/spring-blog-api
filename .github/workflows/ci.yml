@@ -17,7 +17,6 @@ on:
       - "Taskfile.yml"
       - "renovate.json"
       - "docs/**"
-      - "load-tests/**"
 
 jobs:
   build:
