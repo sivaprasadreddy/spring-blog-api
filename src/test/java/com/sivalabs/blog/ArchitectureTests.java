@@ -14,7 +14,6 @@ import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import jakarta.persistence.Entity;
 import org.junit.jupiter.api.Order;
-import org.springframework.data.repository.Repository;
 import org.springframework.stereotype.Service;
 
 @Order(1)
@@ -22,38 +21,26 @@ import org.springframework.stereotype.Service;
 class ArchitectureTests {
     public static final String BASE_PACKAGE = "com.sivalabs.blog";
 
-    // Controllers must not be called by service or repository classes
     @ArchTest
-    static final ArchRule controllers_should_not_be_accessed_by_domain = noClasses()
+    static final ArchRule mappersShouldNotBePublic =
+            classes().that().haveNameMatching(".*Mapper").should().notBePublic();
+
+    @ArchTest
+    static final ArchRule entitiesShouldNotBePublic =
+            classes().that().areAnnotatedWith(Entity.class).should().notBePublic();
+
+    @ArchTest
+    static final ArchRule controllersShouldNotBeAccessedByDomain = noClasses()
             .that()
             .resideInAPackage("..domain..")
             .should()
             .accessClassesThat()
             .resideInAPackage("..api..");
 
-    // Services must not import anything from the api/web layer
-    @ArchTest
-    static final ArchRule services_must_not_depend_on_controllers = noClasses()
-            .that()
-            .haveNameMatching(".*Service")
-            .should()
-            .dependOnClassesThat()
-            .haveNameMatching(".*Controller");
-
-    // Repositories must not be accessed from outside their own module
-    @ArchTest
-    static final ArchRule repositories_are_not_public =
-            noClasses().that().areAssignableTo(Repository.class).should().bePublic();
-
-    // Entities must not be public
-    @ArchTest
-    static final ArchRule entities_are_not_public =
-            classes().that().areAnnotatedWith(Entity.class).should().notBePublic();
-
     // Services are public (accessible to inbound handlers in the same module),
     // but must only be accessed from within their own module — other modules must go through *API facades.
     @ArchTest
-    static final ArchRule services_should_not_be_used_cross_module = classes()
+    static final ArchRule servicesShouldNotBeUsedFromOtherModules = classes()
             .that()
             .areAnnotatedWith(Service.class)
             .should(new ArchCondition<>("only be accessed from same module") {

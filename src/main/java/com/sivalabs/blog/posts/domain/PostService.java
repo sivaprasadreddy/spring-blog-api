@@ -10,6 +10,9 @@ import com.sivalabs.blog.shared.models.PagedResult;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -79,6 +82,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "post-by-slug")
     public Optional<PostDto> findPostBySlug(String slug) {
         return postRepository.findBySlug(slug);
     }
@@ -103,6 +107,11 @@ public class PostService {
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                @CacheEvict(value = "post-by-slug", key = "#cmd.slug()"),
+                @CacheEvict(value = "post-by-slug", key = "#cmd.newSlug()")
+            })
     public void updatePost(UpdatePostCmd cmd) {
         var entity = postRepository
                 .findEntityBySlug(cmd.slug())
