@@ -5,7 +5,10 @@ import static com.tngtech.archunit.core.domain.JavaModifier.*;
 import com.enofex.taikai.ClassCriteria;
 import com.enofex.taikai.Taikai;
 import com.enofex.taikai.java.ImportsConfigurer;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -31,6 +34,13 @@ class TaikaiTests {
                         test.junit(junit -> junit.classesShouldBePackagePrivate(ClassCriteria.nameMatching(".*Test(s)"))
                                 .classesShouldNotBeAnnotatedWithDisabled()
                                 .methodsShouldNotBeAnnotatedWithDisabled()))
+                .jpa(jpa -> jpa.entities(entities -> entities.shouldBePackagePrivate()
+                        .idsShouldNotBeOfType(ClassCriteria.type(UUID.class))
+                        .shouldHaveFieldAnnotatedWithVersion()
+                        .fieldsShouldNotBeOfType(ClassCriteria.type(Date.class)
+                                .or(ClassCriteria.assignableTo(Date.class))
+                                .or(ClassCriteria.type(Calendar.class))
+                                .or(ClassCriteria.assignableTo(Calendar.class)))))
                 .spring(spring -> spring.noAutowiredFields()
                         .boot(boot -> boot.applicationClassShouldResideInPackage(BASE_PACKAGE))
                         .configurations(c -> c.namesShouldMatch(".+Config"))
