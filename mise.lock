@@ -3,7 +3,7 @@
 lockfile_version = 3
 
 [[tools.java]]
-version = "temurin-25.0.4+101.0.LTS"
+version = "temurin-25.0.5+8.0.LTS"
 backend = "core:java"
 specifiers = ["temurin-25"]
 
