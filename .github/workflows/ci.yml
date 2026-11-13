@@ -39,6 +39,9 @@ jobs:
 
       - name: BootUI diagnostics
         uses: jdubois/boot-ui@v2.4.0
+        with:
+          app-command: ./mvnw spring-boot:run -Dbootui.enabled=on
+          test-command: ./mvnw verify -Dbootui.enabled=on
 
       - name: Build with Maven
         run: task verify
