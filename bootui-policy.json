@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "advisors": {
+    "architecture": {"required": true, "failOn": "high"},
+    "hibernate": {"required": true, "failOn": "high"},
+    "spring": {"required": true, "failOn": "high"},
+    "rest-api": {"required": true, "failOn": "high"},
+    "security": {"required": false, "failOn": "high"},
+    "database-advisor": {"required": true, "failOn": "high"}
+  }
+}
