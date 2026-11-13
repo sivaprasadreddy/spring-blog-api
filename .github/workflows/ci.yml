@@ -37,6 +37,9 @@ jobs:
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
 
+      - name: BootUI diagnostics
+        uses: jdubois/boot-ui@v2.4.0
+
       - name: Build with Maven
         run: task verify
 
