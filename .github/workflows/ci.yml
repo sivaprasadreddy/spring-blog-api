@@ -38,7 +38,7 @@ jobs:
         run: chmod +x mvnw
 
       - name: BootUI diagnostics
-        uses: jdubois/boot-ui@v2.4.0
+        uses: jdubois/boot-ui@v2.5.0
         with:
           app-command: ./mvnw spring-boot:run -Dbootui.enabled=on
           policy: bootui-policy.json
