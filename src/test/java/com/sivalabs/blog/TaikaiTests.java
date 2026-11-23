@@ -2,7 +2,7 @@ package com.sivalabs.blog;
 
 import static com.tngtech.archunit.core.domain.JavaModifier.*;
 
-import com.enofex.taikai.ClassCriteria;
+import com.enofex.taikai.core.ClassCriteria;
 import com.enofex.taikai.Taikai;
 import com.enofex.taikai.java.ImportsConfigurer;
 import java.util.Calendar;
